@@ -1,2 +1,3 @@
-# -beyl_api
-beyl api for application
+# Beyl API:
+
+Beyl api.
