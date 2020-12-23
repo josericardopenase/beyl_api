@@ -18,18 +18,18 @@ class Food(models.Model):
 
 class Diet(models.Model):
     owner = models.ForeignKey(trainer_model, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    anotation = models.TextField(null=True, blank=True)
+    name = models.CharField(max_length=255, default="Dieta nueva")
+    description = models.TextField(null=True, blank=True)
 
 class DietDay(models.Model):
     rutine = models.ForeignKey(Diet, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,default="Dia nuevo")
     order = models.IntegerField()
     anotation = models.TextField(null=True, blank=True)
 
 class DietGroup(models.Model):
     day = models.ForeignKey(DietDay, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="Grupo nuevo")
     anotation = models.TextField(null=True, blank=True)
 
 class DietFood(models.Model):
@@ -40,13 +40,13 @@ class DietFood(models.Model):
     )
 
     group = models.ForeignKey(DietGroup, on_delete=models.CASCADE)    
-    portion_cuantity = models.IntegerField()
-    portion_unity = models.IntegerField(choices=CHOICES)
+    portion_cuantity = models.IntegerField(default=100)
+    portion_unity = models.IntegerField(choices=CHOICES, default=0)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
 
 class DietRecipe(models.Model):
     group = models.ForeignKey(DietGroup, on_delete=models.CASCADE)    
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="Nueva receta")
     preparation = models.TextField()
     image = models.ImageField()
 

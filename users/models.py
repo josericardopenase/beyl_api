@@ -25,12 +25,16 @@ class CustomUser(AbstractUser, BaseModel):
         help_text='Defines if the user is a athlete or a trainer', 
         choices=USER_TYPES,
         default='Athlete',
-        max_length=10)
+        max_length=10, 
+        blank=False)
 
+    is_verified = models.BooleanField("User verified", default=False,
+                                      help_text="Have user confirmed hes email?")
+    email = models.EmailField('email address', blank=False, unique=True)
 
 
 class TrainerUser(BaseModel):
-    
+
     """
     TrainerUser():
 
@@ -41,13 +45,14 @@ class TrainerUser(BaseModel):
 
     user = models.ForeignKey(CustomUser, related_name='trainer_user', on_delete=models.CASCADE)
 
-
+    def __str__(self):
+        return self.user.username
 
 
 class AthleteUser(BaseModel):
 
     """
-    AthleteUser():
+    AthleteUser():j16j1
 
     Saves the relationship between CustomUser (out base user)
     and a athlete.
@@ -56,13 +61,16 @@ class AthleteUser(BaseModel):
 
     user = models.ForeignKey(CustomUser, related_name='athlete_user', on_delete=models.CASCADE)
     trainer = models.ForeignKey(TrainerUser, related_name='athlete_trainer',
-                                     on_delete=models.CASCADE)
+                                     on_delete=models.CASCADE, null=True, blank=True)
 
     #===================
      #  User training
     #===================
 
-    rutine = models.OneToOneField('trainings.Rutine', related_name='user_rutine', 
-                                on_delete=models.CASCADE, help_text="Rutine of the user")
+    rutine = models.OneToOneField('trainings.Rutine', related_name='user_rutine',
+                                on_delete=models.CASCADE, help_text="Rutine of the user", blank=True, null=True)
     diet = models.OneToOneField('trainings.Diet', related_name='user_diet', on_delete=models.CASCADE,
-                                help_text="Diet of the user")
+                                help_text="Diet of the user", blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username

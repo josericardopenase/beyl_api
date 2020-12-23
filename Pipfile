@@ -8,6 +8,9 @@ django = "*"
 django-rest-framework = "*"
 django-nested-admin = "*"
 pillow = "*"
+django-extensions = "*"
+django-anymail = "*"
+pylint = "*"
 
 [dev-packages]
 

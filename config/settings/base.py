@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY =  os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = "k36dwnw)v%2=eg+x6g)fo0xw_fx(4!$!ri%p6%m+x0+f%4dk$q" 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,13 +42,19 @@ BASE_APPS = [
 ]
 
 THIRD_PARTY_APPS =[
+    #django rest framework
     'rest_framework',
-    'nested_admin'
+    'rest_framework.authtoken',
+
+    #others
+    'nested_admin',
+    'django_extensions',
+    'anymail'
 ]
 
 OWN_APPS = [
     'users',
-    'api',
+    'api_v1',
     'trainings'
 ]
 
@@ -138,3 +144,16 @@ STATIC_URL = '/static/'
 
 """ OWN SETTINGS """
 AUTH_USER_MODEL = 'users.CustomUser'
+
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": os.environ.get('SEND_IN_BLUE'),
+}
+
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}

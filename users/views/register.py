@@ -1,26 +1,26 @@
+
 from rest_framework.response import Response
 from ..models import CustomUser
+from ..serializers.register import UserRegisterSerializer
 from ..serializers.login import UserLoginSerializer
 from rest_framework.viewsets import ViewSet
-from rest_framework import status
-from utils.permissions import TrainersOnly
+from rest_framework import status 
+
 # Create your views here.
-class UserLogin(ViewSet):
+class UserRegister(ViewSet):
 
     queryset = CustomUser.objects.all()
-    serializer_class =  UserLoginSerializer
+    serializer_class =  UserRegisterSerializer
 
     def create(self, request):
-        serializer = UserLoginSerializer(data=request.data) 
+        serializer = UserRegisterSerializer(data=request.data) 
         serializer.is_valid(raise_exception=True)
         token, user = serializer.save()
 
         data = {
             'user' : user.username,
             'email' : user.email,
-            'token' : token[0].key
+            'token' : token.key
         }
 
-        return Response(data, status=status.HTTP_202_ACCEPTED)
-
-    
+        return Response(data, status=status.HTTP_201_CREATED)
