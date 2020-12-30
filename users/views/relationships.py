@@ -9,6 +9,16 @@ from ..submodels.relationship import Invitation, InvitationCode
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+
+
+"""
+FIXME:
+
+FIX USER PERMISSIONS ONLY TRAINERS CAN CREATE A INVITATION
+AND ONLY ATHLETES CAN ACCEPT IT.
+
+"""
+
 class InvitationView(ViewSet):
     """
     InvitationView:
@@ -67,4 +77,36 @@ class InvitationView(ViewSet):
         return Response(message, status= 200)
 
 
+"""
+FIXME: 
 
+CREATE PERMISSION CLASSES 
+"""
+
+class InvitationCodeView(ViewSet):
+
+    """
+        InvitationCodeView():
+
+        Manage invitation code for accept and create.
+
+    """
+    serializer_class = InvitationCodeSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def create(self, request):
+        trainer = TrainerUser.objects.get(user = request.user)
+        invCode = InvitationCode.objects.create(trainer=trainer)
+        
+        data = {
+            "code" : invCode.key
+        }
+
+        return Response(data, status= status.HTTP_202_ACCEPTED)
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated, AthletesOnly])
+    def join (self, request):
+        serializer = InvitationCodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.save(request.user)
+        return Response(data, status= status.HTTP_202_ACCEPTED)

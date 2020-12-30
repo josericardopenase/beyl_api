@@ -8,15 +8,16 @@ from rest_framework.authtoken.models import Token
 
 class UserLoginSerializer(serializers.Serializer):
 
-    username =  serializers.CharField(max_length=255) 
+    email =  serializers.EmailField() 
     password =  serializers.CharField(max_length=255)  
 
     def validate(self, data):
+
         """
         Check credentials
         """
 
-        user = authenticate(username = data['username'], password = data['password'])
+        user = authenticate(email = data['email'], password = data['password'])
         
         if not user:
             raise serializers.ValidationError('Invalid credentials')
@@ -27,6 +28,7 @@ class UserLoginSerializer(serializers.Serializer):
         return data
 
     def save(self):
+
         """
             saving serializer
         """

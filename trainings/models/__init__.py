@@ -1,2 +1,2 @@
-from .diets import *
-from .rutines import *
+from .diet import *
+from .rutine import *

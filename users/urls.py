@@ -5,9 +5,10 @@ from .views import register, login, relationships
 
 
 router = routers.SimpleRouter()
-router.register(r'register', register.UserRegister)
-router.register(r'login', login.UserLogin)
+router.register(r'register', register.UserRegisterView)
+router.register(r'login', login.UserLoginView)
 router.register(r'invitation', relationships.InvitationView, basename="invitation")
+router.register(r'invitation_code', relationships.InvitationCodeView, basename="invitation_code")
 
 urlpatterns = [
     path('', include(router.urls))

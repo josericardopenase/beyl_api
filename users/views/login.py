@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import status
 from utils.permissions import TrainersOnly
 # Create your views here.
-class UserLogin(ViewSet):
+class UserLoginView(ViewSet):
 
     queryset = CustomUser.objects.all()
     serializer_class =  UserLoginSerializer

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ..models.rutines import *
+from ..models.rutine import *
 import nested_admin
 
 #Rutine, RutineDay, RutineGRoup, RutineExcersise

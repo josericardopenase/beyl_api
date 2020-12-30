@@ -28,9 +28,13 @@ class CustomUser(AbstractUser, BaseModel):
         max_length=10, 
         blank=False)
 
+    USERNAME_FIELD = 'email'
+
     is_verified = models.BooleanField("User verified", default=False,
                                       help_text="Have user confirmed hes email?")
     email = models.EmailField('email address', blank=False, unique=True)
+    profile_pic = models.ImageField(blank=False, null=True)
+    REQUIRED_FIELDS = []
 
 
 class TrainerUser(BaseModel):

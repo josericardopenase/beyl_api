@@ -7,7 +7,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import status 
 
 # Create your views here.
-class UserRegister(ViewSet):
+class UserRegisterView(ViewSet):
 
     queryset = CustomUser.objects.all()
     serializer_class =  UserRegisterSerializer
