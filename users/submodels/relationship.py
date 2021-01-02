@@ -20,6 +20,7 @@ class Invitation(BaseModel):
     """
         - Agregar el plan que tiene contratado el usuario
     """
+
     def __str__(self):
         """ return trainer and athlete"""
         return '@{} is trainer of @{}'.format(

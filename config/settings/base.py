@@ -55,7 +55,8 @@ THIRD_PARTY_APPS =[
 OWN_APPS = [
     'users',
     'api_v1',
-    'trainings'
+    'trainings',
+    'history'
 ]
 
 

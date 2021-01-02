@@ -4,6 +4,7 @@ from rest_framework import routers
 from .views import register, login, relationships
 
 
+#Adding all routes to the urls
 router = routers.SimpleRouter()
 router.register(r'register', register.UserRegisterView)
 router.register(r'login', login.UserLoginView)

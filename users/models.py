@@ -3,7 +3,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from utils.models import BaseModel
-
+from datetime import date
+from django.utils.timezone import now
 # Create your models here.
 class CustomUser(AbstractUser, BaseModel):
 
@@ -65,6 +66,12 @@ class AthleteUser(BaseModel):
     and a athlete.
 
     """
+    
+    SEX_CHOICES = ( 
+        ('H','Hombre'), 
+        ('M','Mujer'),
+        ('O','Otro'),
+    )
 
     user = models.ForeignKey(CustomUser, related_name='athlete_user', on_delete=models.CASCADE)
     trainer = models.ForeignKey(TrainerUser, related_name='athlete_trainer',
@@ -78,6 +85,13 @@ class AthleteUser(BaseModel):
                                 on_delete=models.CASCADE, help_text="Rutine of the user", blank=True, null=True)
     diet = models.OneToOneField('trainings.Diet', related_name='user_diet', on_delete=models.CASCADE,
                                 help_text="Diet of the user", blank=True, null=True)
+
+    weight = models.FloatField('weight', help_text="Weight of the user in Kg")
+    height = models.FloatField('height', help_text="Hieght of the user in Cm")
+    fat = models.FloatField('fat_percent', help_text="Fat in percentage")
+    born_date = models.DateField()
+    sexo = models.CharField('sex_choices', help_text="Choices of sex", choices=SEX_CHOICES, max_length=8)
+    alergias = models.ManyToManyField('trainings.Food')
 
     def __str__(self):
         return self.user.username

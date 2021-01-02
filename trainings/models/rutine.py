@@ -1,11 +1,12 @@
 from django.db import models
 from ..settings import athlete_model, trainer_model 
+from utils.models import BaseModel
+
 athlete_model = athlete_model
 trainer_model = trainer_model
 
-
 # Create your models here.
-class Excersise(models.Model):
+class Excersise(BaseModel):
     """
     Excersise:
 
@@ -34,11 +35,11 @@ class Excersise(models.Model):
         return self.name
 
 
-class Rutine(models.Model):
+class Rutine(BaseModel):
     owner = models.ForeignKey(trainer_model, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="New rutine")
 
-class RutineDay(models.Model):
+class RutineDay(BaseModel):
     """
     RutineDay:
 
@@ -50,7 +51,7 @@ class RutineDay(models.Model):
     name = models.CharField(max_length=255, default="New day")
     order = models.IntegerField()
 
-class RutineGroup(models.Model):
+class RutineGroup(BaseModel):
     """
 
     RutineGroup:
@@ -62,7 +63,7 @@ class RutineGroup(models.Model):
     name = models.CharField(max_length=255, default ="New group")
     order = models.IntegerField()
 
-class RutineExcersise(models.Model):
+class RutineExcersise(BaseModel):
 
     """
 
