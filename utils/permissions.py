@@ -7,7 +7,7 @@ class AthletesOnly(BasePermission):
 
     Allow only athletes to interact with that view
     """
-    message = "Only athletes have access to this view"
+    message = "Solo los atletas tienen permiso para acceder."
 
     def has_permission(self, request, view):
         return request.user.user_type == "Athlete"
@@ -18,7 +18,7 @@ class TrainersOnly(BasePermission):
 
     Allow only trainers to interact with that view
     """
-    message = "Only trainers have access to this view"
+    message = "Solo los entrenadores tienen permiso para acceder"
 
     def has_permission(self, request, view):
         return request.user.user_type == "Trainer"
@@ -29,7 +29,7 @@ class AthleteWithTrainer(BasePermission):
 
     Allow only trainers to interact with that view
     """
-    message = "You need to be a athlete and have a trainer"
+    message = "Aun no tienes entrenador. Agrega a el tuyo a traves de los ajustes"
 
     def has_permission(self, request, view):
         try:

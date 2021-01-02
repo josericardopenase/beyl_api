@@ -12,5 +12,5 @@ class NoTrainer(APIException):
 
 class NoDiet(APIException):
     status_code = 403
-    default_detail = 'No tienes una dieta asignada. Espera que la asigne tu entrenador.'
+    default_detail = 'Tu dieta no esta disponible, espera que tu entrenador la termine.'
     default_code = 'no_diet'
