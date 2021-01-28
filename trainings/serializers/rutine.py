@@ -39,3 +39,24 @@ class RutineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rutine
         fields = ('owner', 'name', 'rutine_days')
+
+#============================================
+#TRAINER VIEW
+#============================================
+class RutineGroupNormalSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RutineGroup
+        fields = ('id', 'name', 'order', 'rutine_excersises', 'day')
+
+
+class RutineDayNormalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RutineDay
+        fields = ('id', 'name', 'order', 'rutine', 'rutine_groups')
+
+class RutineNormalSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Rutine
+        fields = ('id', 'owner', 'name')

@@ -1,15 +1,15 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from .views import register, login, relationships
+from .views import register, login, relationships, profile
 
 
 #Adding all routes to the urls
 router = routers.SimpleRouter()
-router.register(r'register', register.UserRegisterView)
+router.register(r'register_athlete', register.AthleteRegisterView, basename="register_athlete")
 router.register(r'login', login.UserLoginView)
-router.register(r'invitation', relationships.InvitationView, basename="invitation")
 router.register(r'invitation_code', relationships.InvitationCodeView, basename="invitation_code")
+router.register(r'profile', profile.ProfileView, basename="invitation_code")
 
 urlpatterns = [
     path('', include(router.urls))

@@ -1,6 +1,7 @@
 from .models import WeightHistory, GeneralHistory
 from rest_framework.serializers import ModelSerializer
 from users.models import AthleteUser
+from rest_framework import serializers
 
 
 class WeightHistorySerializer(ModelSerializer):
@@ -70,14 +71,14 @@ class GeneralHistorySerializer(ModelSerializer):
 
         return data
 
-    def save(self, user):
+    def save(self):
         """
         save:
 
         we save the weight history and update the weight of the user
         """
 
-        athlete = AthleteUser.objects.get(user = user)
+        athlete = AthleteUser.objects.get(user = self.context['request'].user)
 
 
         GeneralHistory.objects.create(
@@ -89,5 +90,7 @@ class GeneralHistorySerializer(ModelSerializer):
             distance = self.validated_data['distance'],
 
         )
+
+
 
 

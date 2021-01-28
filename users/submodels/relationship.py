@@ -5,29 +5,6 @@ from utils.models import BaseModel
 import random
 import string
 
-class Invitation(BaseModel):
-    """
-    AthleteTrainerRelationship
-
-    is a table that holds the relationship between athlete
-    and trainers
-    """
-
-    trainer = models.ForeignKey('users.TrainerUser', on_delete=models.CASCADE)
-    athlete = models.ForeignKey('users.AthleteUser', on_delete=models.CASCADE)
-    confirmed = models.BooleanField(default=False)
-
-    """
-        - Agregar el plan que tiene contratado el usuario
-    """
-
-    def __str__(self):
-        """ return trainer and athlete"""
-        return '@{} is trainer of @{}'.format(
-            self.trainer,
-            self.athlete
-        )
-
 class InvitationCode(BaseModel):
 
     """
@@ -42,8 +19,7 @@ class InvitationCode(BaseModel):
     trainer = models.ForeignKey('users.TrainerUser', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        if not self.key:
-            self.key = self.generate_key()
+        self.key = self.generate_key()
         return super().save(*args, **kwargs)
 
     @classmethod

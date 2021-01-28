@@ -94,4 +94,4 @@ class AthleteUser(BaseModel):
     alergias = models.ManyToManyField('trainings.Food')
 
     def __str__(self):
-        return self.user.username
+        return self.user.email

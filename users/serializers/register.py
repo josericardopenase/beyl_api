@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from ..models import CustomUser, TrainerUser, AthleteUser
 from rest_framework.validators import UniqueValidator
+from users.submodels.relationship import InvitationCode
 from trainings.models import *
 from rest_framework.authtoken.models import Token
 
@@ -62,3 +63,58 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
         #We return the token and the user
         return token, user
+
+class AthleteRegisterSerializer(serializers.Serializer):
+    email = serializers.EmailField( validators=[UniqueValidator(queryset=CustomUser.objects.all())])
+    password = serializers.CharField(max_length=40)
+    name = serializers.CharField(max_length= 20)
+    surname = serializers.CharField(max_length=50 )
+    height = serializers.FloatField()
+    weight = serializers.FloatField()
+    sex = serializers.CharField()
+    key = serializers.CharField()
+    born_date = serializers.DateField()
+
+    def validate(self, data):
+
+        try:
+            inv = InvitationCode.objects.get(key = data['key'])
+            self.context['inv'] = inv
+            return data
+        except:
+            raise serializers.ValidationError('El código ingresado es inválido')
+
+    def save(self):
+
+        curruser = CustomUser(
+            email=self.validated_data['email'] ,
+            user_type = 'Athlete',
+            first_name = self.validated_data['name'],
+            last_name = self.validated_data['surname'],
+            is_active = True,
+            is_verified=True
+        )
+
+        curruser.set_password(self.validated_data['password']) 
+
+        curruser.save()
+
+        print(curruser)
+
+        token = Token.objects.create(user=curruser) 
+
+        profile = AthleteUser(
+            trainer = self.context['inv'].trainer,
+            user = curruser,
+            weight = self.validated_data['weight'],
+            height = self.validated_data['height'],
+            fat = self.validated_data['height'],
+            born_date = self.validated_data['born_date'],
+        ).save()
+
+        self.context['inv'].delete()
+
+        return token, curruser
+
+
+

@@ -14,3 +14,8 @@ class NoDiet(APIException):
     status_code = 403
     default_detail = 'Tu dieta no esta disponible, espera que tu entrenador la termine.'
     default_code = 'no_diet'
+
+class InvalidCode(APIException):
+    status_code = 403
+    default_detail = 'Código invalido'
+    default_code = 'invalid_code'

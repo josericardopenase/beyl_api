@@ -23,7 +23,10 @@ class GeneralHistory(History):
     name = models.CharField('Name of the sport', max_length=30)
     time = models.TimeField()
     has_distance = models.BooleanField()
-    distance = models.FloatField(blank=True)
+    distance = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        ordering = ("-date",'-created')
 
 
 class WeightHistory(History):
