@@ -25,8 +25,9 @@ class Diet(BaseModel):
 class DietDay(BaseModel):
     diet = models.ForeignKey(Diet, on_delete=models.CASCADE, related_name='diet_days')
     name = models.CharField(max_length=255,default="Dia nuevo")
-    order = models.IntegerField()
-    anotation = models.TextField(null=True, blank=True)
+
+    order = models.IntegerField(default = 10)
+    anotation = models.TextField(default = "")
 
 class DietGroup(BaseModel):
     day = models.ForeignKey(DietDay, on_delete=models.CASCADE, related_name='diet_groups')
@@ -34,6 +35,7 @@ class DietGroup(BaseModel):
     anotation = models.TextField(null=True, blank=True)
 
 class DietFood(BaseModel):
+
     CHOICES = (
         ("gr", "gramos"),
         ("oz", "oz"),

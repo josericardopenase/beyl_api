@@ -51,7 +51,8 @@ THIRD_PARTY_APPS =[
     'django_extensions',
     'anymail',
     'ckeditor',
-    'django_filters'
+    'django_filters',
+    'corsheaders'
 ]
 
 OWN_APPS = [
@@ -59,13 +60,15 @@ OWN_APPS = [
     'api_v1',
     'trainings',
     'history',
-    'blog'
+    'blog',
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = BASE_APPS + OWN_APPS  + THIRD_PARTY_APPS
 
-MIDDLEWARE = [
+MIDDLEWARE = [    
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

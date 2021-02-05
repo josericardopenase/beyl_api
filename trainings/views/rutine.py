@@ -1,7 +1,7 @@
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 from rest_framework import status 
-from ..serializers.rutine import RutineSerializer, RutineDaySerializer, RutineGroupSerializer, RutineExcersiseSerializer, RutineDayDetailSerializer, ExcersiseSerializer, RutineNormalSerializer, RutineDayNormalSerializer, RutineGroupNormalSerializer
+from ..serializers.rutine import RutineSerializer, RutineDaySerializer, RutineGroupSerializer, RutineExcersiseSerializer, RutineDayDetailSerializer, ExcersiseSerializer, RutineNormalSerializer, RutineDayNormalSerializer, RutineGroupNormalSerializer, RutineExcersisePostSerializer, RutineExcersisePatchSerializer
 
 from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise
 from rest_framework import permissions
@@ -12,6 +12,7 @@ from utils.exceptions import NoRutine, NoTrainer
 from rest_framework.pagination import PageNumberPagination
 import django_filters.rest_framework
 from rest_framework import filters
+from rest_framework import mixins
 
 class RutineClientView(ViewSet):
     """
@@ -77,14 +78,36 @@ class RutineDayView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = RutineDay.objects.all()
     serializer_class = RutineDayNormalSerializer
+    filter_backends = ( django_filters.rest_framework.DjangoFilterBackend, )
+    filterset_fields = ('rutine',)
 
 class RutineGroupView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = RutineGroup.objects.all()
     serializer_class = RutineGroupNormalSerializer
+    filter_backends = ( django_filters.rest_framework.DjangoFilterBackend, )
+    filterset_fields = ('day',)
 
-class RutineExcersiseView(ModelViewSet):
+class RutineExcersiseView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin,mixins.DestroyModelMixin ,GenericViewSet):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = RutineExcersise.objects.all()
     serializer_class = RutineExcersiseSerializer
+    filter_backends = ( django_filters.rest_framework.DjangoFilterBackend, )
+    filterset_fields = ('group',)
 
+    def get_serializer_class(self):
+        print(self.action)
+
+        if self.action == 'update' or self.action == 'partial_update':
+            return RutineExcersisePatchSerializer
+
+        return self.serializer_class 
+        
+
+    def create(self, request, *args, **kwargs):
+        serializer = RutineExcersisePostSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        saved = serializer.save()
+        serializer = self.get_serializer(instance=saved)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

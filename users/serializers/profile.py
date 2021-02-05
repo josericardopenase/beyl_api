@@ -25,3 +25,11 @@ class AthleteProfileSerializer(serializers.ModelSerializer):
     class Meta():
         fields = ['trainer', 'weight', 'height', 'fat']
         model  = AthleteUser
+
+class AthleteProfileTrainerSerializer(serializers.ModelSerializer):
+
+    user = ProfileSerializer()
+
+    class Meta():
+        fields = ['id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet']
+        model  = AthleteUser

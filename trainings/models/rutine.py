@@ -1,9 +1,11 @@
 from django.db import models
 from ..settings import athlete_model, trainer_model 
-from utils.models import BaseModel
+from utils.models import BaseModel, OrderedModel
+from decimal import *
 
 athlete_model = athlete_model
 trainer_model = trainer_model
+
 
 # Create your models here.
 class Excersise(BaseModel):
@@ -39,8 +41,11 @@ class Rutine(BaseModel):
     owner = models.ForeignKey(trainer_model, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="New rutine")
 
-class RutineDay(BaseModel):
+
+class RutineDay(OrderedModel):
+
     """
+
     RutineDay:
 
     A day on a rutine can be monday, day 1 etc... this day have a one to many rel
@@ -48,10 +53,10 @@ class RutineDay(BaseModel):
 
     """
     rutine = models.ForeignKey(Rutine, on_delete=models.CASCADE, related_name="rutine_days")
-    name = models.CharField(max_length=255, default="New day")
-    order = models.IntegerField()
+    name = models.CharField(max_length=255, default="Día nuevo")
 
-class RutineGroup(BaseModel):
+class RutineGroup(OrderedModel):
+
     """
 
     RutineGroup:
@@ -59,11 +64,11 @@ class RutineGroup(BaseModel):
     Group of excersises that a day can have.
 
     """
-    day = models.ForeignKey(RutineDay, on_delete=models.CASCADE, related_name='rutine_groups')
-    name = models.CharField(max_length=255, default ="New group")
-    order = models.IntegerField()
 
-class RutineExcersise(BaseModel):
+    day = models.ForeignKey(RutineDay, on_delete=models.CASCADE, related_name='rutine_groups')
+    name = models.CharField(max_length=255, default ="Grupo nuevo")
+
+class RutineExcersise(OrderedModel):
 
     """
 
@@ -78,4 +83,3 @@ class RutineExcersise(BaseModel):
     series = models.CharField(max_length= 400)
     anotation = models.TextField(blank = True)
     excersise = models.ManyToManyField(Excersise, related_name="excersises")
-    order = models.IntegerField()

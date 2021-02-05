@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise
+from utils.serializers import OrderedSerializer
 
 class ExcersiseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Excersise
         fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video')
 
-class RutineExcersiseSerializer(serializers.ModelSerializer):
+class RutineExcersiseSerializer(OrderedSerializer):
     excersise = ExcersiseSerializer(many=True)
 
     class Meta:
@@ -43,20 +44,55 @@ class RutineSerializer(serializers.ModelSerializer):
 #============================================
 #TRAINER VIEW
 #============================================
-class RutineGroupNormalSerializer(serializers.ModelSerializer):
+
+class RutineGroupNormalSerializer(OrderedSerializer):
 
     class Meta:
         model = RutineGroup
-        fields = ('id', 'name', 'order', 'rutine_excersises', 'day')
+        fields = ('id', 'name', 'day', 'order')
 
+    def get_queryset(self):
+        return self.Meta.model.objects.filter(day=self.initial_data['day'])
 
-class RutineDayNormalSerializer(serializers.ModelSerializer):
+    def get_update_queryset(self, instance):
+        return self.Meta.model.objects.filter(day = instance.day)
+
+class RutineDayNormalSerializer(OrderedSerializer):
     class Meta:
         model = RutineDay
-        fields = ('id', 'name', 'order', 'rutine', 'rutine_groups')
+        fields = ('id', 'name', 'order', 'rutine')
 
-class RutineNormalSerializer(serializers.ModelSerializer):
+    def get_queryset(self):
+        return self.Meta.model.objects.filter(rutine=self.initial_data['rutine'])
+
+    def get_update_queryset(self, instance):
+        return self.Meta.model.objects.filter(rutine = instance.rutine)
+    
+
+class RutineNormalSerializer(OrderedSerializer):
 
     class Meta:
         model = Rutine
-        fields = ('id', 'owner', 'name')
+        fields = ('id', 'owner', 'name', 'rutine_days')
+
+class RutineExcersisePostSerializer(OrderedSerializer):
+    class Meta:
+        model  = RutineExcersise
+        fields = ('id', 'group', 'series', 'anotation', 'excersise', 'order')
+
+    def get_queryset(self):
+        return self.Meta.model.objects.filter(group=self.initial_data['group'])
+
+    def get_update_queryset(self, instance):
+        return self.Meta.model.objects.filter(group = instance.group)
+
+class RutineExcersisePatchSerializer(OrderedSerializer):
+    class Meta:
+        model  = RutineExcersise
+        fields = ('id', 'group', 'series', 'anotation', 'order')
+
+    def get_queryset(self):
+        return self.Meta.model.objects.filter(group=self.initial_data['group'])
+
+    def get_update_queryset(self, instance):
+        return self.Meta.model.objects.filter(group = instance.group)

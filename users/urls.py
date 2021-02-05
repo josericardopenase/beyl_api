@@ -10,6 +10,7 @@ router.register(r'register_athlete', register.AthleteRegisterView, basename="reg
 router.register(r'login', login.UserLoginView)
 router.register(r'invitation_code', relationships.InvitationCodeView, basename="invitation_code")
 router.register(r'profile', profile.ProfileView, basename="invitation_code")
+router.register(r'my_athletes', profile.MyAthletesView, basename="my_athletes")
 
 urlpatterns = [
     path('', include(router.urls))

@@ -110,6 +110,9 @@ class AthleteRegisterSerializer(serializers.Serializer):
             height = self.validated_data['height'],
             fat = self.validated_data['height'],
             born_date = self.validated_data['born_date'],
+            sexo =  self.validated_data['sex'],
+            trainer_diet= Diet.objects.create(name="Dieta 1", owner=self.context['inv'].trainer),
+            trainer_rutine = Rutine.objects.create(name="Rutina 1", owner=self.context['inv'].trainer),
         ).save()
 
         self.context['inv'].delete()
