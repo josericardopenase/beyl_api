@@ -1,13 +1,18 @@
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, ReadOnlyModelViewSet, ModelViewSet, GenericViewSet
 from rest_framework import status 
 from ..serializers.diet import DietSerializer, DietDaySerializer, DietGroupSerializer, DietFoodSerializer, DietDayDetailSerializer, FoodSerializer, DietRecipesSerializer
+from ..serializers import diet
 from ..models.diet import Diet, DietDay, DietFood, DietGroup, Food, DietRecipe, DietRecipeFood, DietRecipe
 from rest_framework import permissions
 from utils.permissions import AthleteWithTrainer
 from users.models import AthleteUser, TrainerUser
 from rest_framework import exceptions
-from utils.exceptions import NoDiet, NoTrainer
+from utils.exceptions import NoRutine, NoTrainer
+from rest_framework.pagination import PageNumberPagination
+import django_filters.rest_framework
+from rest_framework import filters
+from rest_framework import mixins
 
 class DietClientView(ViewSet):
     """
@@ -71,3 +76,69 @@ class RecipeView(ViewSet):
             return Response(serializer.data)
         except:
             raise exceptions.NotFound()
+
+
+class pagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 20
+
+class FoodView(ReadOnlyModelViewSet):
+    """
+        ExcersiseView:
+
+        to see the excersises in the database.
+        It adds two methods:
+            + list: for listing all excersises publics or of the trainer.
+            + retrieve: for taken all excersises that are public or of the trainer.
+    """
+
+    pagination_class = pagination
+    serializer_class = diet.FoodSerializer
+    queryset = Food.objects.all()
+    filter_backends = (filters.SearchFilter, )
+    permission_classes = [permissions.IsAuthenticated]
+    search_fields = ('name', )
+
+class DietView(ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated,]
+    queryset = Diet.objects.all()
+    serializer_class = diet.DietNormalSerializer
+
+class DietDayView(ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated,]
+    queryset = DietDay.objects.all()
+    serializer_class = diet.DietDayNormalSerializer
+    filter_backends = ( django_filters.rest_framework.DjangoFilterBackend, )
+    filterset_fields = ('diet',)
+
+class DietGroupView(ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated,]
+    serializer_class = diet.DietGroupNormalSerializer
+    queryset = DietGroup.objects.all()
+    filter_backends = ( django_filters.rest_framework.DjangoFilterBackend, )
+    filterset_fields = ('day',)
+
+class DietFoodView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin,mixins.DestroyModelMixin ,GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated,]
+    queryset = DietFood.objects.all()
+    serializer_class = diet.DietFoodPostSerializer
+    filter_backends = ( django_filters.rest_framework.DjangoFilterBackend, )
+    filterset_fields = ('group',)
+
+    def get_serializer_class(self):
+        print(self.action)
+
+        if self.action == 'update' or self.action == 'partial_update' or self.action == "create":
+            return self.serializer_class
+
+        return DietFoodSerializer
+        
+
+    def create(self, request, *args, **kwargs):
+        serializer = diet.DietFoodPostSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        saved = serializer.save()
+        serializer = diet.DietFoodSerializer(instance=saved)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

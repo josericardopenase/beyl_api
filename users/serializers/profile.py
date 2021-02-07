@@ -23,7 +23,7 @@ class AthleteProfileSerializer(serializers.ModelSerializer):
     trainer = TrainerProfileSerializer()
 
     class Meta():
-        fields = ['trainer', 'weight', 'height', 'fat']
+        fields = ['trainer', 'id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet', 'born_date', 'age', 'sexo', 'amount_excersise']
         model  = AthleteUser
 
 class AthleteProfileTrainerSerializer(serializers.ModelSerializer):
@@ -31,5 +31,5 @@ class AthleteProfileTrainerSerializer(serializers.ModelSerializer):
     user = ProfileSerializer()
 
     class Meta():
-        fields = ['id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet']
+        fields = ['id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet', 'born_date', 'age', 'sexo', 'amount_excersise']
         model  = AthleteUser

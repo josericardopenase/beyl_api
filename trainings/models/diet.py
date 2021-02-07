@@ -1,6 +1,6 @@
 from django.db import models
 from ..settings import athlete_model, trainer_model
-from utils.models import BaseModel
+from utils.models import BaseModel, OrderedModel
 
 athlete_model = athlete_model
 trainer_model = trainer_model
@@ -18,23 +18,25 @@ class Food(BaseModel):
         return self.name
 
 class Diet(BaseModel):
+
     owner = models.ForeignKey(trainer_model, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="Dieta nueva")
     description = models.TextField(null=True, blank=True)
 
-class DietDay(BaseModel):
+class DietDay(OrderedModel):
     diet = models.ForeignKey(Diet, on_delete=models.CASCADE, related_name='diet_days')
     name = models.CharField(max_length=255,default="Dia nuevo")
 
     order = models.IntegerField(default = 10)
     anotation = models.TextField(default = "")
 
-class DietGroup(BaseModel):
+class DietGroup(OrderedModel):
+
     day = models.ForeignKey(DietDay, on_delete=models.CASCADE, related_name='diet_groups')
     name = models.CharField(max_length=255, default="Grupo nuevo")
     anotation = models.TextField(null=True, blank=True)
 
-class DietFood(BaseModel):
+class DietFood(OrderedModel):
 
     CHOICES = (
         ("gr", "gramos"),
@@ -47,7 +49,7 @@ class DietFood(BaseModel):
     portion_unity = models.CharField(choices=CHOICES, default=0, max_length=14)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
 
-class DietRecipe(BaseModel):
+class DietRecipe(OrderedModel):
     group = models.ForeignKey(DietGroup, on_delete=models.CASCADE, related_name= 'diet_recipes')    
     name = models.CharField(max_length=255, default="Nueva receta")
     preparation = models.TextField()

@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from utils.models import BaseModel
 from datetime import date
 from django.utils.timezone import now
+from datetime import date
 # Create your models here.
 class CustomUser(AbstractUser, BaseModel):
 
@@ -68,9 +69,16 @@ class AthleteUser(BaseModel):
     """
     
     SEX_CHOICES = ( 
-        ('H','Hombre'), 
-        ('M','Mujer'),
-        ('O','Otro'),
+        ('hombre','H'), 
+        ('mujer','M'),
+    )
+
+    SPORT_AMOUNT = ( 
+        ('ne','NE'), 
+        ('el','EL'), 
+        ('em','EM'),
+        ('ef','EF'),
+        ('emf','EMF'),
     )
 
     user = models.ForeignKey(CustomUser, related_name='athlete_user', on_delete=models.CASCADE)
@@ -96,7 +104,14 @@ class AthleteUser(BaseModel):
     fat = models.FloatField('fat_percent', help_text="Fat in percentage")
     born_date = models.DateField()
     sexo = models.CharField('sex_choices', help_text="Choices of sex", choices=SEX_CHOICES, max_length=8)
+    amount_excersise = models.CharField('amount_excersise', help_text="Choices of sport activity ", choices=SPORT_AMOUNT , max_length=80, default=SPORT_AMOUNT[0][1])
     alergias = models.ManyToManyField('trainings.Food')
+
+
+    @property 
+    def age(self):
+        today = date.today()
+        return today.year - self.born_date.year - ((today.month, today.day) < (self.born_date.month, self.born_date.day))
 
     def __str__(self):
         return self.user.email
