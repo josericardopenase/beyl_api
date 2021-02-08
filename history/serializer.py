@@ -1,6 +1,7 @@
 from .models import WeightHistory, GeneralHistory
 from rest_framework.serializers import ModelSerializer
 from users.models import AthleteUser
+from users.serializers.profile import ProfileSerializer, AthleteProfileTrainerSerializer
 from rest_framework import serializers
 
 
@@ -50,7 +51,7 @@ class GeneralHistorySerializer(ModelSerializer):
     """
     class Meta():
         model = GeneralHistory
-        fields = ('date', 'name', 'time', 'has_distance', 'distance')
+        fields = ('date', 'name', 'time', 'has_distance', 'distance',)
 
     def validated(self, data):
         """
@@ -94,3 +95,23 @@ class GeneralHistorySerializer(ModelSerializer):
 
 
 
+
+class GeneralHistoryTrainerSerializer(ModelSerializer):
+    """
+    Serializesr of wewight history, you need only the data and be athlete.
+    """
+
+    user = AthleteProfileTrainerSerializer()
+
+    class Meta():
+        model = GeneralHistory
+        fields = ('date', 'name', 'time', 'has_distance', 'distance', 'user')
+
+class WeightHistoryTrainerSerializer(ModelSerializer):
+    """
+    Serializesr of wewight history, you need only the data and be athlete.
+
+    """
+    class Meta():
+        model = WeightHistory
+        fields = ('data', 'user', 'created')

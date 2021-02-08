@@ -6,7 +6,15 @@ class History(BaseModel):
     user = models.ForeignKey('users.AthleteUser', on_delete=models.CASCADE)
 
     class Meta:
+        """
+        
+        We make the class abstract and set a default 
+        ordering.
+
+        """
         abstract = True
+        get_latest_by = ['-created',]
+        ordering = ('-created',)
 
 # Create your models here.`
 class GeneralHistory(History):

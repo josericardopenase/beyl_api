@@ -96,8 +96,6 @@ class RutineExcersiseView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
     filterset_fields = ('group',)
 
     def get_serializer_class(self):
-        print(self.action)
-
         if self.action == 'update' or self.action == 'partial_update': 
             return RutineExcersisePatchSerializer
 
