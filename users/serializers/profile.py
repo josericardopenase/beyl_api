@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import CustomUser, TrainerUser, AthleteUser
+from ..models import CustomUser, TrainerUser, AthleteUser, TrainerPlan
 from rest_framework.validators import UniqueValidator
 from trainings.models import *
 from django.contrib.auth import authenticate
@@ -10,12 +10,19 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['email', 'profile_pic', 'first_name', 'last_name']
         model  = CustomUser
 
+class TrainerPlanSerializer(serializers.ModelSerializer):
+    class Meta():
+        fields = ['user_count', 'name']
+        model = TrainerPlan
+
 class TrainerProfileSerializer(serializers.ModelSerializer):
 
     user = ProfileSerializer()
+    plan = TrainerPlanSerializer()
+
 
     class Meta():
-        fields = ['user', ]
+        fields = ['user', 'plan']
         model = TrainerUser
 
 class AthleteProfileSerializer(serializers.ModelSerializer):

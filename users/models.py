@@ -41,6 +41,10 @@ class CustomUser(AbstractUser, BaseModel):
     username = models.CharField(blank=True, null=True, max_length=50)
     REQUIRED_FIELDS = []
 
+class TrainerPlan(BaseModel):
+    user_count = models.PositiveIntegerField(null = False, blank= False)
+    price = models.PositiveIntegerField(null = False, blank= False)
+    name = models.CharField(max_length=200)
 
 class TrainerUser(BaseModel):
 
@@ -53,9 +57,11 @@ class TrainerUser(BaseModel):
     """
 
     user = models.ForeignKey(CustomUser, related_name='trainer_user', on_delete=models.CASCADE)
+    plan = models.ForeignKey(TrainerPlan, related_name = 'trainer_plan', on_delete = models.CASCADE, default=1)
+
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
 
 class AthleteUser(BaseModel):

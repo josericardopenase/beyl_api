@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from ..models import CustomUser, TrainerUser, AthleteUser
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework import status 
 from rest_framework import permissions
 from utils.permissions import AthletesOnly, TrainersOnly
@@ -9,6 +9,7 @@ from ..serializers.relationship import InvitationCodeSerializer, InvitationCodeV
 from ..submodels.relationship import InvitationCode
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin 
 
 
 
@@ -19,7 +20,7 @@ FIXME:
 CREATE PERMISSION CLASSES 
 """
 
-class InvitationCodeView(ViewSet):
+class InvitationCodeView(ModelViewSet, RetrieveModelMixin, DestroyModelMixin):
 
     """
         InvitationCodeView():
@@ -28,7 +29,19 @@ class InvitationCodeView(ViewSet):
 
     """
     serializer_class = InvitationCodeSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, TrainersOnly]
+    
+    def get_queryset(self):
+        trainer = TrainerUser.objects.get(user = self.request.user)
+        query = InvitationCode.objects.filter(trainer= trainer)
+        return query
+
+
+    def list(self, request):
+        trainer = TrainerUser.objects.get(user = request.user)
+        query = InvitationCode.objects.filter(trainer= trainer)
+        serializer = InvitationCodeViewSerializer(query, many = True)
+        return Response(serializer.data)
 
     def create(self, request):
         trainer = TrainerUser.objects.get(user = request.user)

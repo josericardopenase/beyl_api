@@ -52,7 +52,11 @@ THIRD_PARTY_APPS =[
     'anymail',
     'ckeditor',
     'django_filters',
-    'corsheaders'
+    'corsheaders',
+
+    #websockets
+    'channels'
+
 ]
 
 OWN_APPS = [
@@ -61,6 +65,7 @@ OWN_APPS = [
     'trainings',
     'history',
     'blog',
+    'chat'
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -226,4 +231,14 @@ CKEDITOR_CONFIGS = {
             'elementspath'
         ]),
     }
+}
+
+#CHANNELS CONFIGURATION
+
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
 }

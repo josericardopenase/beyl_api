@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from ..models import CustomUser, TrainerUser, AthleteUser
+from ..models import CustomUser, TrainerUser, AthleteUser, TrainerPlan
 from rest_framework.validators import UniqueValidator
 from users.submodels.relationship import InvitationCode
 from trainings.models import *
@@ -84,6 +84,8 @@ class AthleteRegisterSerializer(serializers.Serializer):
         except:
             raise serializers.ValidationError('El código ingresado es inválido')
 
+        return data
+
     def save(self):
 
         curruser = CustomUser(
@@ -98,8 +100,6 @@ class AthleteRegisterSerializer(serializers.Serializer):
         curruser.set_password(self.validated_data['password']) 
 
         curruser.save()
-
-        print(curruser)
 
         token = Token.objects.create(user=curruser) 
 
@@ -119,5 +119,37 @@ class AthleteRegisterSerializer(serializers.Serializer):
 
         return token, curruser
 
+class TrainerRegisterSerializer(serializers.Serializer):
+    email = serializers.EmailField( validators=[UniqueValidator(queryset=CustomUser.objects.all())])
+    password = serializers.CharField(max_length=40)
+    name = serializers.CharField(max_length= 20)
+    surname = serializers.CharField(max_length=50 )
 
+    def validate(self, data):
+        return data
+
+    def save(self):
+
+        curruser = CustomUser(
+            email=self.validated_data['email'] ,
+            user_type = 'Trainer',
+            first_name = self.validated_data['name'],
+            last_name = self.validated_data['surname'],
+            is_active = True,
+            is_verified=True
+        )
+
+        curruser.set_password(self.validated_data['password'])
+        curruser.save()
+
+        profile = TrainerUser(
+            user = curruser,
+            plan = TrainerPlan.objects.first()
+        )
+
+        profile.save()
+
+        token = Token.objects.create(user=curruser) 
+
+        return token, curruser
 

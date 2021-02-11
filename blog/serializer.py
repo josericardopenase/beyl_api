@@ -9,4 +9,4 @@ class ArticleSerializer(ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('title', 'texto', 'image', 'author', 'created')
+        fields = ('id', 'title', 'texto', 'image', 'author', 'created')

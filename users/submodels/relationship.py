@@ -15,7 +15,7 @@ class InvitationCode(BaseModel):
 
     """
 
-    key = models.CharField("key", max_length=8, primary_key=True, unique=True)
+    key = models.CharField("key", max_length=8, primary_key=True, unique=True, blank=True)
     trainer = models.ForeignKey('users.TrainerUser', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):

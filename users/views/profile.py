@@ -1,7 +1,7 @@
 
 from rest_framework.response import Response
 from ..models import CustomUser, AthleteUser, TrainerUser
-from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer
+from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework import status
 from utils.permissions import TrainersOnly, AthletesOnly
@@ -22,6 +22,12 @@ class ProfileView(ViewSet):
     def athlete(self, request):
         athlete = AthleteUser.objects.get(user = request.user)
         serializer = AthleteProfileSerializer(athlete) 
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, TrainersOnly])
+    def trainer(self, request):
+        trainer = TrainerUser.objects.get(user = request.user)
+        serializer = TrainerProfileSerializer(trainer)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 

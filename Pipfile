@@ -32,6 +32,8 @@ django-ckeditor = "*"
 django-allauth = "*"
 django-filter = "*"
 django-cors-headers = "*"
+channels = "*"
+channels-redis = "*"
 
 [dev-packages]
 
