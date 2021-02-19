@@ -4,11 +4,31 @@ from rest_framework.validators import UniqueValidator
 from trainings.models import *
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from ..submodels.expo import ExpoPushToken
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta():
         fields = ['email', 'profile_pic', 'first_name', 'last_name']
         model  = CustomUser
+
+
+class ExpoTokenSerializer(serializers.ModelSerializer):
+    class Meta():
+        fields = ['token']
+        model  = ExpoPushToken
+
+    def save(self, user):
+        expoToken = ExpoPushToken(
+            user = user,
+            token = self.validated_data['token']
+        )
+
+        expoToken.save()
+
+        return expoToken
+
+        
+
 
 class TrainerPlanSerializer(serializers.ModelSerializer):
     class Meta():

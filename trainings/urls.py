@@ -4,6 +4,7 @@ from django.urls import path, include
 from rest_framework import routers
 from .views import rutine
 from .views import diet
+from .views import save
 
 router = routers.SimpleRouter()
 router.register(r'rutine_client', rutine.RutineClientView, basename="rutines_client")
@@ -25,5 +26,7 @@ router.register(r'food', diet.FoodView)
 
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('save_diet/<int:pk>/', save.SaveDietView),
+    path('save_rutine/<int:pk>/', save.SaveRutineView)
 ]

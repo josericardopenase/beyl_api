@@ -1,6 +1,7 @@
 from django.db import models
 from ..settings import athlete_model, trainer_model
 from utils.models import BaseModel, OrderedModel
+from model_clone import mixins
 
 athlete_model = athlete_model
 trainer_model = trainer_model
@@ -17,7 +18,7 @@ class Food(BaseModel):
     def __str__(self):
         return self.name
 
-class Diet(BaseModel):
+class Diet(mixins.CloneMixin ,BaseModel):
 
     owner = models.ForeignKey(trainer_model, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="Dieta nueva")

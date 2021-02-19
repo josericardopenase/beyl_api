@@ -1,13 +1,14 @@
 
 from rest_framework.response import Response
 from ..models import CustomUser, AthleteUser, TrainerUser
-from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer
+from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer, ExpoTokenSerializer
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework import status
 from utils.permissions import TrainersOnly, AthletesOnly
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from utils.exceptions import NoRutine
+
 # Create your views here.
 class ProfileView(ViewSet):
 
@@ -24,6 +25,13 @@ class ProfileView(ViewSet):
         serializer = AthleteProfileSerializer(athlete) 
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated, AthletesOnly])
+    def expoToken(self, request):
+        serializer = ExpoTokenSerializer(data = request.data) 
+        serializer.is_valid(raise_exception=True)
+        serializer.save(request.user)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, TrainersOnly])
     def trainer(self, request):
         trainer = TrainerUser.objects.get(user = request.user)

@@ -96,8 +96,8 @@ class AthleteUser(BaseModel):
     #===================
 
     rutine = models.OneToOneField('trainings.Rutine', related_name='user_rutine',
-                                on_delete=models.CASCADE, help_text="Rutine of the user", blank=True, null=True)
-    diet = models.OneToOneField('trainings.Diet', related_name='user_diet', on_delete=models.CASCADE,
+                                on_delete=models.SET_NULL, help_text="Rutine of the user", blank=True, null=True)
+    diet = models.OneToOneField('trainings.Diet', related_name='user_diet', on_delete=models.SET_NULL,
                                 help_text="Diet of the user", blank=True, null=True)
 
     trainer_rutine = models.OneToOneField('trainings.Rutine', related_name='trainer_rutine',

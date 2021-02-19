@@ -5,6 +5,8 @@ from ..serializers.register import UserRegisterSerializer, AthleteRegisterSerial
 from ..serializers.login import UserLoginSerializer
 from rest_framework.viewsets import ViewSet
 from rest_framework import status 
+from rest_framework.decorators import action
+from rest_framework import status
 
 
 # Create your views here.
@@ -40,3 +42,19 @@ class TrainerRegisterView(ViewSet):
         }
 
         return Response(data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], permission_classes=[])
+    def verify_email(self, request):
+        email = request.data['email']
+
+        if email is None:
+            return Response({'error' : 'you need to set a valid email'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = CustomUser.objects.get(email = email)
+            return Response({'error' : 'this email already exist'}, status= status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'success' : 'this email is valid'}, status=status.HTTP_200_OK)
+
+
+        

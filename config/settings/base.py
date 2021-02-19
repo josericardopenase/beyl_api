@@ -53,6 +53,7 @@ THIRD_PARTY_APPS =[
     'ckeditor',
     'django_filters',
     'corsheaders',
+    'model_clone',
 
     #websockets
     'channels'
