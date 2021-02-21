@@ -69,6 +69,7 @@ OWN_APPS = [
     'blog',
     'chat'
 ]
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = BASE_APPS + OWN_APPS  + THIRD_PARTY_APPS
@@ -160,7 +161,7 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 ANYMAIL = {
-    "SENDINBLUE_API_KEY": os.environ.get('SEND_IN_BLUE'),
+    "SENDINBLUE_API_KEY": config('SEND_IN_BLUE'),
 }
 
 EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
