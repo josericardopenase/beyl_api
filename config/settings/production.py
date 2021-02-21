@@ -50,22 +50,12 @@ AWS_STORAGE_BUCKET_NAME = config('AWS_BUCKET_NAME')
 AWS_S3_REGION_NAME="eu-west-2"
 AWS_S3_HOST = "s3.eu-west-2.amazonaws.com"
 
-STATICFILES_STORAGE = 's3_folder_storage.s3.StaticStorage'
+""" STATICFILES_STORAGE = 's3_folder_storage.s3.StaticStorage' """
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 STATIC_S3_PATH = 'static/'
 
-#SECURE DJANGO
 
-CORS_REPLACE_HTTPS_REFERER      = True
-HOST_SCHEME                     = "https://"
-SECURE_PROXY_SSL_HEADER         = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT             = True
-SESSION_COOKIE_SECURE           = True
-CSRF_COOKIE_SECURE              = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS  = True
-SECURE_HSTS_SECONDS             = 1000000
-SECURE_FRAME_DENY               = True
 
 #CONNECTIONS CONFIGURATION
 
