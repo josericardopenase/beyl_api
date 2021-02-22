@@ -50,15 +50,11 @@ AWS_ACCESS_KEY_ID        = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY   = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_BUCKET_NAME')
 
-AWS_S3_REGION_NAME="eu-west-2"
-AWS_S3_HOST = "s3.eu-west-2.amazonaws.com"
+AWS_S3_REGION_NAME="eu-west-1"
+AWS_S3_HOST = "s3.eu-west-1.amazonaws.com"
 
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-STATIC_S3_PATH = 'static/'
-
-AWS_LOCATION = 'static'
 
 #CONNECTIONS CONFIGURATION
 
