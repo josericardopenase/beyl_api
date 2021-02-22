@@ -1,8 +1,8 @@
 from .base import *
 
-DEBUG = True
+DEBUG = False
 
-""" 
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -11,7 +11,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 
-} """
+}
 
 THIRD_PARTY_APPS += [
 
