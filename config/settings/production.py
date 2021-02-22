@@ -20,6 +20,8 @@ THIRD_PARTY_APPS += [
 
 ]
 
+
+ALLOWED_HOSTS = ['https://beyl-api.herokuapp.com/', 'http://127.0.0.1:8000/']
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
