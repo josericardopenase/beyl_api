@@ -2,6 +2,7 @@ from .base import *
 
 DEBUG = False
 
+""" 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -10,7 +11,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 
-}
+} """
 
 THIRD_PARTY_APPS += [
 
@@ -21,7 +22,7 @@ THIRD_PARTY_APPS += [
 ]
 
 
-ALLOWED_HOSTS = ['beyl-api.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['beyl-api.herokuapp.com', '127.0.0.1', 'localhost']
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
