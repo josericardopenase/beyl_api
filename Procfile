@@ -1,1 +1,1 @@
-web: daphne config.asgi:application 
+web: gunicorn config.wsgi:application 
