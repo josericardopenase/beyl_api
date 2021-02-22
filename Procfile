@@ -1,1 +1,1 @@
-web: gunicorn config.wsgi:application --workers 3
+web: daphne config.asgi:application
