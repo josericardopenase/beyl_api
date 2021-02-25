@@ -17,7 +17,8 @@ THIRD_PARTY_APPS += [
 
     'storages',
     's3_folder_storage',
-    'anymail'
+    'anymail',
+    'ckeditor',
 
 ]
 
