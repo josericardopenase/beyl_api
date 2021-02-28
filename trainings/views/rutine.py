@@ -69,6 +69,12 @@ class ExcersiseView(ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ('name', )
 
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "UPDATE" or self.request.method == "PATCH" or self.request.method == "PUT":
+            self.permission_classes = [permissions.IsAdminUser,]
+        
+        return super(ExcersiseView, self).get_permissions()
+
 class RutineView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = Rutine.objects.all()

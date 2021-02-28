@@ -9,11 +9,11 @@ trainer_model = trainer_model
 # Create your models here.
 class Food(BaseModel):
     name = models.CharField(max_length=255)
-    protein = models.IntegerField() 
-    carbohydrates = models.IntegerField()
-    fat = models.IntegerField()
-    kcalories = models.IntegerField()
-    portion_weight = models.IntegerField() 
+    protein = models.FloatField() 
+    carbohydrates = models.FloatField()
+    fat = models.FloatField()
+    kcalories = models.FloatField()
+    portion_weight = models.FloatField() 
 
     def __str__(self):
         return self.name

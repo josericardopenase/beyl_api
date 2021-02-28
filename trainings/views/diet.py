@@ -84,7 +84,7 @@ class pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 20
 
-class FoodView(ReadOnlyModelViewSet):
+class FoodView(ModelViewSet):
     """
         ExcersiseView:
 
@@ -100,6 +100,13 @@ class FoodView(ReadOnlyModelViewSet):
     filter_backends = (filters.SearchFilter, )
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ('name', )
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "UPDATE" or self.request.method == "PATCH" or self.request.method == "PUT":
+            self.permission_classes = [permissions.IsAdminUser,]
+        
+        return super(FoodView, self).get_permissions()
+
 
 class DietView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated,]
