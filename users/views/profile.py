@@ -1,7 +1,7 @@
 
 from rest_framework.response import Response
 from ..models import CustomUser, AthleteUser, TrainerUser
-from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer, ExpoTokenSerializer
+from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer, ExpoTokenSerializer, ChangePasswordSerializer
 from rest_framework.viewsets import ViewSet, ModelViewSet, GenericViewSet
 from rest_framework import status
 from utils.permissions import TrainersOnly, AthletesOnly
@@ -27,6 +27,28 @@ class ProfileView(mixins.ListModelMixin, GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     
+    @action(detail=False, methods=['put'], permission_classes=[IsAuthenticated])
+    def change_password(self, request):
+
+        obj = request.user
+        serializer = ChangePasswordSerializer(data = request.data) 
+        serializer.is_valid(raise_exception=True)
+
+        if not obj.check_password(serializer.data.get("old_password")):
+            return Response({"old_password": ["Contraseña equivocada."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj.set_password(serializer.data.get("new_password"))
+        obj.save()
+
+        response = {
+            'status': 'success',
+            'code': status.HTTP_200_OK,
+            'message': 'Password updated successfully',
+            'data': []
+        }
+
+        return Response(response)
+
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, AthletesOnly])
     def athlete(self, request):
         athlete = AthleteUser.objects.get(user = request.user)

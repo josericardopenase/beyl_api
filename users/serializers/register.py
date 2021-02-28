@@ -138,7 +138,7 @@ class TrainerRegisterSerializer(serializers.Serializer):
             first_name = self.validated_data['name'],
             last_name = self.validated_data['surname'],
             is_active = True,
-            is_verified=True
+            is_verified=False
         )
 
         curruser.set_password(self.validated_data['password'])
