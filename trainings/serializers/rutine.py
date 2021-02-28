@@ -1,11 +1,15 @@
 from rest_framework import serializers
 from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise
-from utils.serializers import OrderedSerializer
+from utils.serializers import OrderedSerializer, Base64ImageField, Base64VideoField
+
 
 class ExcersiseSerializer(serializers.ModelSerializer):
+
+    image = Base64ImageField(max_length= 10000000, use_url = True)
+    video = Base64VideoField(max_length= 10000000, use_url = True)
     class Meta:
         model = Excersise
-        fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video')
+        fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video', 'public')
 
 class RutineExcersiseSerializer(OrderedSerializer):
     excersise = ExcersiseSerializer(many=True)
