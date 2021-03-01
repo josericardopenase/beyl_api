@@ -74,6 +74,7 @@ class AthleteRegisterSerializer(serializers.Serializer):
     sex = serializers.CharField()
     key = serializers.CharField()
     born_date = serializers.DateField()
+    amount_excersise = serializers.CharField()
 
     def validate(self, data):
 
@@ -115,6 +116,7 @@ class AthleteRegisterSerializer(serializers.Serializer):
             trainer_rutine = Rutine.objects.create(name="Rutina 1", owner=self.context['inv'].trainer),
             diet= Diet.objects.create(name="Dieta 1", owner=self.context['inv'].trainer),
             rutine = Rutine.objects.create(name="Rutina 1", owner=self.context['inv'].trainer),
+            amount_excersise=self.validated_data['amount_excersise']
         ).save()
 
         self.context['inv'].delete()
