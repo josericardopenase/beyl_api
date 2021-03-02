@@ -76,15 +76,12 @@ class InvitationCodeView(ModelViewSet, RetrieveModelMixin, DestroyModelMixin):
             user.trainer = code.trainer
             user.trainer_diet = Diet.objects.create(name="Dieta 1", owner=code.trainer)
             user.trainer_rutine =Rutine.objects.create(name="Rutina 1", owner=code.trainer)
-            print("hello")
             user.rutine =Rutine.objects.create(name="Dieta entrenador 1", owner=code.trainer)
-            print("hello")
             user.diet = Diet.objects.create(name="Rutina entrenador 1", owner=code.trainer)
-
-            print("hello")
             user.save()
 
-            print("hello")
+            code.delete()
+
             return Response({"Exito" : "Te has unido a tu entrenador"}, status.HTTP_202_ACCEPTED)
         except:
             raise InvalidCode
