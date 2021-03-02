@@ -75,6 +75,24 @@ class MyAthletesView(ModelViewSet):
     query = AthleteUser.objects.all()
     serializer_class = AthleteProfileTrainerSerializer
 
+    def destroy(self, request, pk = None):
+        try:
+
+            print("Hello delete athlete")
+
+            user = self.get_queryset().get(id = pk)
+            user.trainer = None
+            user.trainer_rutine = None
+            user.trainer_diet = None
+            user.diet = None
+            user.rutine = None
+            user.save()
+
+            return Response({"success" : "Se ha eliminado el atleta correctamente"})
+
+        except:
+            return Response({"Adios" : "adios"})
+
     def  get_queryset(self):
         Trainer = TrainerUser.objects.get(user = self.request.user)
         return AthleteUser.objects.filter(trainer = Trainer)

@@ -10,6 +10,8 @@ from ..submodels.relationship import InvitationCode
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin 
+from trainings.models.diet import Diet
+from trainings.models.rutine import Rutine
 
 
 
@@ -60,5 +62,29 @@ class InvitationCodeView(ModelViewSet, RetrieveModelMixin, DestroyModelMixin):
             code = InvitationCode.objects.get(key = code)
             serializer = InvitationCodeViewSerializer(code, many=False) 
             return Response(serializer.data, status.HTTP_202_ACCEPTED)
+        except:
+            raise InvalidCode
+
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny,AthletesOnly])
+    def join_trainer(self, request):
+        try:
+            code = request.data['key']
+            code = InvitationCode.objects.get(key = code)
+
+            user = AthleteUser.objects.get(user = request.user)
+
+            user.trainer = code.trainer
+            user.trainer_diet = Diet.objects.create(name="Dieta 1", owner=code.trainer)
+            user.trainer_rutine =Rutine.objects.create(name="Rutina 1", owner=code.trainer)
+            print("hello")
+            user.rutine =Rutine.objects.create(name="Dieta entrenador 1", owner=code.trainer)
+            print("hello")
+            user.diet = Diet.objects.create(name="Rutina entrenador 1", owner=code.trainer)
+
+            print("hello")
+            user.save()
+
+            print("hello")
+            return Response({"Exito" : "Te has unido a tu entrenador"}, status.HTTP_202_ACCEPTED)
         except:
             raise InvalidCode
