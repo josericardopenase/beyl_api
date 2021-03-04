@@ -34,7 +34,7 @@ class GeneralHistory(History):
     distance = models.FloatField(blank=True, null=True)
 
     class Meta:
-        ordering = ("-date",'-created')
+        ordering = ("-date",)
 
 
 class WeightHistory(History):
