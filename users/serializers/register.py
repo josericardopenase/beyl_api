@@ -75,7 +75,7 @@ class AthleteRegisterSerializer(serializers.Serializer):
     key = serializers.CharField()
     born_date = serializers.DateField()
     amount_excersise = serializers.CharField()
-    alergias = serializers.CharField()
+    alergias = serializers.CharField(allow_blank=True, allow_null=True)
 
     def validate(self, data):
 
