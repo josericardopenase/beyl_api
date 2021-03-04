@@ -17,7 +17,6 @@ class UserLoginSerializer(serializers.Serializer):
         Check credentials
         """
         user = authenticate(email = data['email'], password = data['password'])
-        print(user)
         
         if not user:
             raise serializers.ValidationError('Dirección de correo electrónico o contraseña incorrectos')

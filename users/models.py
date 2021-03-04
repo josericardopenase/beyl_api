@@ -167,7 +167,7 @@ class AthleteUser(BaseModel):
     born_date = models.DateField()
     sexo = models.CharField('sex_choices', help_text="Choices of sex", choices=SEX_CHOICES, max_length=8)
     amount_excersise = models.CharField('amount_excersise', help_text="Choices of sport activity ", choices=SPORT_AMOUNT , max_length=80, default=SPORT_AMOUNT[0][1])
-    alergias = models.ManyToManyField('trainings.Food')
+    alergias = models.TextField(null=True, blank=True)
 
 
     @property 

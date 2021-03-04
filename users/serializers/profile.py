@@ -15,8 +15,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def validate_profile_pic(self, image):
 
-        print(image.size)
-
         KB =  1000538
 
         if(image.size > KB):
@@ -64,7 +62,13 @@ class AthleteProfileSerializer(serializers.ModelSerializer):
     trainer = TrainerProfileSerializer()
 
     class Meta():
-        fields = ['trainer', 'id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet', 'born_date', 'age', 'sexo', 'amount_excersise']
+        fields = ['trainer', 'id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet', 'born_date', 'age', 'sexo', 'amount_excersise', 'alergias']
+        model  = AthleteUser
+
+class AthleteProfilePutSerializer(serializers.ModelSerializer):
+
+    class Meta():
+        fields = ['height', 'born_date', 'age', 'sexo', 'amount_excersise', 'alergias']
         model  = AthleteUser
 
 class AthleteProfileTrainerSerializer(serializers.ModelSerializer):
@@ -72,7 +76,7 @@ class AthleteProfileTrainerSerializer(serializers.ModelSerializer):
     user = ProfileSerializer()
 
     class Meta():
-        fields = ['id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet', 'born_date', 'age', 'sexo', 'amount_excersise']
+        fields = ['id','weight', 'height', 'fat', 'diet', 'user', 'trainer_rutine', 'trainer_diet', 'born_date', 'age', 'sexo', 'amount_excersise', 'alergias']
         model  = AthleteUser
 
 class ChangePasswordSerializer(serializers.Serializer):

@@ -1,7 +1,7 @@
 
 from rest_framework.response import Response
 from ..models import CustomUser, AthleteUser, TrainerUser
-from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer, ExpoTokenSerializer, ChangePasswordSerializer
+from ..serializers.profile import ProfileSerializer, AthleteProfileSerializer, AthleteProfileTrainerSerializer, TrainerProfileSerializer, ExpoTokenSerializer, ChangePasswordSerializer, AthleteProfilePutSerializer
 from rest_framework.viewsets import ViewSet, ModelViewSet, GenericViewSet
 from rest_framework import status
 from utils.permissions import TrainersOnly, AthletesOnly
@@ -15,6 +15,13 @@ class ProfileView(mixins.ListModelMixin, GenericViewSet):
 
     permission_classes=[IsAuthenticated,]
     serializer_class=ProfileSerializer
+
+    def get_serializer_class(self):
+
+
+        if(self.action == "athlete"):
+            return AthleteProfilePutSerializer
+        return self.serializer_class
 
     def list(self, request):
         serializer = ProfileSerializer(request.user) 
@@ -49,18 +56,30 @@ class ProfileView(mixins.ListModelMixin, GenericViewSet):
 
         return Response(response)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, AthletesOnly])
+
+    @action(detail=False, methods=['get','put'], permission_classes=[IsAuthenticated, AthletesOnly])
     def athlete(self, request):
         athlete = AthleteUser.objects.get(user = request.user)
-        serializer = AthleteProfileSerializer(athlete) 
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+        if request.method == "GET":
+            serializer = AthleteProfileSerializer(athlete) 
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        elif request.method == "PUT":
+            serializer = AthleteProfilePutSerializer(athlete ,data = request.data, partial=True) 
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated, AthletesOnly])
     def expoToken(self, request):
-        serializer = ExpoTokenSerializer(data = request.data) 
-        serializer.is_valid(raise_exception=True)
-        serializer.save(request.user)
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        try:
+            serializer = ExpoTokenSerializer(data = request.data) 
+            serializer.is_valid(raise_exception=True)
+            serializer.save(request.user)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except:
+            return Response({"Error" : "ya existe una persona con ese token"}, status=status.HTTP_400_BAD_REQUEST)
+
         
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, TrainersOnly])
     def trainer(self, request):
@@ -77,8 +96,6 @@ class MyAthletesView(ModelViewSet):
 
     def destroy(self, request, pk = None):
         try:
-
-            print("Hello delete athlete")
 
             user = self.get_queryset().get(id = pk)
             user.trainer = None

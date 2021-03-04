@@ -135,7 +135,6 @@ class DietFoodView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Update
     filterset_fields = ('group',)
 
     def get_serializer_class(self):
-        print(self.action)
 
         if self.action == 'update' or self.action == 'partial_update' or self.action == "create":
             return self.serializer_class
