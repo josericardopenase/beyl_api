@@ -18,7 +18,6 @@ THIRD_PARTY_APPS += [
     'storages',
     's3_folder_storage',
     'anymail',
-    'ckeditor',
 
 ]
 
@@ -56,8 +55,6 @@ AWS_S3_HOST = "s3.eu-west-1.amazonaws.com"
 
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-#CONNECTIONS CONFIGURATION
 
 import dj_database_url
 

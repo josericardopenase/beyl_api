@@ -163,7 +163,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 ANYMAIL = {
     "SENDINBLUE_API_KEY": config('SEND_IN_BLUE'),
 }
-
 EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
 REST_FRAMEWORK = {
@@ -172,6 +171,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+
 
 CKEDITOR_CONFIGS = {
     'default': {
