@@ -13,7 +13,7 @@ from rest_framework.pagination import PageNumberPagination
 import django_filters.rest_framework
 from rest_framework import filters
 from rest_framework import mixins
-
+from django.db.models.functions import Length
 class RutineClientView(ViewSet):
     """
 
@@ -64,7 +64,7 @@ class ExcersiseView(ModelViewSet):
 
     pagination_class = pagination
     serializer_class = ExcersiseSerializer
-    queryset = Excersise.objects.all()
+    queryset = Excersise.objects.all().order_by(Length('name'))
     filter_backends = (filters.SearchFilter, )
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ('name', )

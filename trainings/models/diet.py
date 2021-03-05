@@ -18,6 +18,7 @@ class Food(BaseModel):
     def __str__(self):
         return self.name
 
+
 class Diet(mixins.CloneMixin ,BaseModel):
 
     owner = models.ForeignKey(trainer_model, on_delete=models.CASCADE)
