@@ -96,7 +96,7 @@ class FoodView(ModelViewSet):
 
     pagination_class = pagination
     serializer_class = diet.FoodSerializer
-    queryset = Food.objects.all().order_by(Length('name'))
+    queryset = Food.objects.all().order_by(Length('name'), 'id')
     filter_backends = (filters.SearchFilter, )
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ('name', )
