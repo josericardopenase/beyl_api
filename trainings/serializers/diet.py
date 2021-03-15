@@ -72,7 +72,7 @@ class DietGroupNormalSerializer(OrderedSerializer):
 class DietDayNormalSerializer(OrderedSerializer):
     class Meta:
         model = DietDay
-        fields = ('id', 'name', 'diet', 'order')
+        fields = ('id', 'name', 'diet', 'order', 'diet_days')
 
     def get_queryset(self):
         return self.Meta.model.objects.filter(diet=self.initial_data['diet'])
