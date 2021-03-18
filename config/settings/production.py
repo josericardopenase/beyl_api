@@ -38,7 +38,6 @@ USE_TZ = True
 
 #STATIC AND MEDIA FILES
 
-
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
