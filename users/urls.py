@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from .views import register, login, relationships, profile
+from .views import register, login, relationships, profile, recover
 
 
 #Adding all routes to the urls
@@ -15,5 +15,7 @@ router.register(r'my_athletes', profile.MyAthletesView, basename="my_athletes")
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('verify_email/', relationships.AccountVerificationAPIView.as_view())
+    path('verify_email/', relationships.AccountVerificationAPIView.as_view()),
+    path('change_password/', recover.SendRecoverPasswordAPIView.as_view()),
+    path('perform_change_password/', recover.PerformRecoverPassword.as_view())
 ]

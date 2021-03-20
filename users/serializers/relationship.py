@@ -34,6 +34,7 @@ class InvitationCodeSerializer(Serializer):
 
             IT COULD BE A PROBLEM THIS TRY AND EXCEPT. 
         """
+
         try:
             code =  InvitationCode.objects.get(key = data['key'])
         except:

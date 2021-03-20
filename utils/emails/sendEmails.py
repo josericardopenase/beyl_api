@@ -5,7 +5,6 @@ from anymail.message import EmailMessage
 def SendEmailWithTemplate(email, template, data):
 
     message = EmailMessage(
-                subject="Bienvenido a Beyl",
                 to=["Nuevo usuario <" + email + ">"],
                  # single recipient...
                 # ...multiple to emails would all get the same message
