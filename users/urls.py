@@ -14,5 +14,6 @@ router.register(r'profile', profile.ProfileView, basename="invitation_code")
 router.register(r'my_athletes', profile.MyAthletesView, basename="my_athletes")
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('verify_email/', relationships.AccountVerificationAPIView.as_view())
 ]

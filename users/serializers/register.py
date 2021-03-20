@@ -5,6 +5,7 @@ from rest_framework.validators import UniqueValidator
 from users.submodels.relationship import InvitationCode
 from trainings.models import *
 from rest_framework.authtoken.models import Token
+from utils.emails.UserEmails import SendAccountVerificationEmail
 
 """
     FIXME: 
@@ -156,6 +157,8 @@ class TrainerRegisterSerializer(serializers.Serializer):
         profile.save()
 
         token = Token.objects.create(user=curruser) 
+
+        SendAccountVerificationEmail(self.validated_data['email'], self.validated_data['name'])
 
         return token, curruser
 

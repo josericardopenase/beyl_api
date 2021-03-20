@@ -5,14 +5,14 @@ from rest_framework import status
 from rest_framework import permissions
 from utils.permissions import AthletesOnly, TrainersOnly
 from utils.exceptions import InvalidCode
-from ..serializers.relationship import InvitationCodeSerializer, InvitationCodeViewSerializer
+from ..serializers.relationship import InvitationCodeSerializer, InvitationCodeViewSerializer, AccountVerificationSerializer
 from ..submodels.relationship import InvitationCode
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin 
 from trainings.models.diet import Diet
 from trainings.models.rutine import Rutine
-
+from rest_framework.views import APIView
 
 
 
@@ -85,3 +85,12 @@ class InvitationCodeView(ModelViewSet, RetrieveModelMixin, DestroyModelMixin):
             return Response({"Exito" : "Te has unido a tu entrenador"}, status.HTTP_202_ACCEPTED)
         except:
             raise InvalidCode
+
+
+class AccountVerificationAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AccountVerificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = {'message': 'Email verificado con éxito!'}
+        return Response(data, status.HTTP_200_OK)

@@ -9,7 +9,6 @@ from datetime import date
 from PIL import Image 
 from io import BytesIO
 from django.core.files import File
-
 # Create your models here.
 
 class _Image(Image.Image):

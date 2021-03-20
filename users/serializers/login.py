@@ -21,7 +21,7 @@ class UserLoginSerializer(serializers.Serializer):
         if not user:
             raise serializers.ValidationError('Dirección de correo electrónico o contraseña incorrectos')
         if not user.is_verified:
-            raise serializers.ValidationError('La cuenta aun no esta activa. Cuando se acepte tu solicitud para la beta te avisaremos :)')
+            raise serializers.ValidationError('La cuenta aun no esta activa. Te hemos enviado un mensaje de confirmación de email :)')
 
         self.context['user'] = user
         return data
