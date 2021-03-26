@@ -2,7 +2,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 from rest_framework import status 
 from ..serializers.rutine import RutineSerializer, RutineDaySerializer, RutineGroupSerializer, RutineExcersiseSerializer, RutineDayDetailSerializer, ExcersiseSerializer, RutineNormalSerializer, RutineDayNormalSerializer, RutineGroupNormalSerializer, RutineExcersisePostSerializer, RutineExcersisePatchSerializer
-
 from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise
 from rest_framework import permissions
 from utils.permissions import AthleteWithTrainer
@@ -10,10 +9,16 @@ from users.models import AthleteUser, TrainerUser
 from rest_framework import exceptions
 from utils.exceptions import NoRutine, NoTrainer
 from rest_framework.pagination import PageNumberPagination
-import django_filters.rest_framework
+
 from rest_framework import filters
 from rest_framework import mixins
 from django.db.models.functions import Length
+from django.db.models import Q
+from utils.permissions import TrainersOnly
+
+#Django filters
+import django_filters.rest_framework
+from django_filters.rest_framework import DjangoFilterBackend
 class RutineClientView(ViewSet):
     """
 
@@ -48,9 +53,9 @@ class RutineClientView(ViewSet):
         
 
 class pagination(PageNumberPagination):
-    page_size = 3
+    page_size = 12
     page_size_query_param = 'page_size'
-    max_page_size = 20
+    max_page_size = 100
 
 class ExcersiseView(ModelViewSet):
     """
@@ -65,13 +70,29 @@ class ExcersiseView(ModelViewSet):
     pagination_class = pagination
     serializer_class = ExcersiseSerializer
     queryset = Excersise.objects.all().order_by(Length('name'))
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     permission_classes = [permissions.IsAuthenticated]
-    search_fields = ('name', )
+    search_fields = ('name', 'public')
+    filterset_fields = ('public', 'owner')
+
+    def get_queryset(self):
+        try:
+            user = self.request.user
+
+            trainer = None
+            if(user.user_type == "Trainer"):
+                trainer = TrainerUser.objects.get(user = user)
+            else:
+                trainer = AthleteUser.objects.get(user = user).trainer
+
+            return self.queryset.filter(Q(owner = trainer) | Q(public = True))
+        except: 
+            return super().get_queryset().filter(public = True)
+
 
     def get_permissions(self):
         if self.request.method == "POST" or self.request.method == "UPDATE" or self.request.method == "PATCH" or self.request.method == "PUT":
-            self.permission_classes = [permissions.IsAdminUser,]
+            self.permission_classes = [TrainersOnly,]
         
         return super(ExcersiseView, self).get_permissions()
 

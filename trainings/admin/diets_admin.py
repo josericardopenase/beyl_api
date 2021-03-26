@@ -39,5 +39,6 @@ class FoodAdmin(admin.ModelAdmin):
     ordering = [Lower('name')]
 
 
+admin.site.register(FoodTag)
 admin.site.register(Diet, DietAdmin)
 admin.site.register(Food, FoodAdmin)

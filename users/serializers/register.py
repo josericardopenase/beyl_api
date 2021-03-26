@@ -6,6 +6,7 @@ from users.submodels.relationship import InvitationCode
 from trainings.models import *
 from rest_framework.authtoken.models import Token
 from utils.emails.UserEmails import SendAccountVerificationEmail
+import secrets
 
 """
     FIXME: 
@@ -135,6 +136,41 @@ class TrainerRegisterSerializer(serializers.Serializer):
     def validate(self, data):
         return data
 
+    def createTestAthlete(self, trainer, name, surname, weight, height, sex, sport):
+
+
+        num = secrets.token_hex(7)
+
+        while(len(CustomUser.objects.filter(email = "email_de_ejemplo" + num + "@beylapp.com")) != 0):
+            num = secrets.token_hex(7)
+
+        user = CustomUser(
+            email = "email_de_ejemplo" + num + "@beylapp.com",
+            user_type = "Athlete",
+            first_name = name,
+            last_name = surname,
+            is_active = False,
+            is_verified = False
+        )
+
+        user.save()
+
+        profile = AthleteUser(
+            trainer = trainer,
+            user = user,
+            weight = weight,
+            height = height,
+            fat = 40,
+            born_date = "1995-12-04",
+            sexo =  sex,
+            trainer_diet= Diet.objects.create(name="Dieta 1", owner=trainer),
+            trainer_rutine = Rutine.objects.create(name="Rutina 1", owner=trainer),
+            diet= Diet.objects.create(name="Dieta 1", owner=trainer),
+            rutine = Rutine.objects.create(name="Rutina 1", owner=trainer),
+            amount_excersise= sport,
+            alergias = "Ninguna"
+        ).save()
+
     def save(self):
 
         curruser = CustomUser(
@@ -154,8 +190,12 @@ class TrainerRegisterSerializer(serializers.Serializer):
             plan = TrainerPlan.objects.first()
         )
 
+
+
         profile.save()
 
+        self.createTestAthlete(profile, "Jose", "Francisco Pérez", 180, 70, "hombre", "EF")
+        self.createTestAthlete(profile, "Paula", "García Hume", 65, 170, "mujer", "EL")
         token = Token.objects.create(user=curruser) 
 
         SendAccountVerificationEmail(self.validated_data['email'], self.validated_data['name'])

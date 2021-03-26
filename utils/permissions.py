@@ -10,7 +10,10 @@ class AthletesOnly(BasePermission):
     message = "Solo los atletas tienen permiso para acceder."
 
     def has_permission(self, request, view):
-        return request.user.user_type == "Athlete"
+        try:
+            return request.user.user_type == "Athlete"
+        except:
+            return False
 
 class TrainersOnly(BasePermission):
     """
@@ -21,7 +24,10 @@ class TrainersOnly(BasePermission):
     message = "Solo los entrenadores tienen permiso para acceder"
 
     def has_permission(self, request, view):
-        return request.user.user_type == "Trainer"
+        try:
+            return request.user.user_type == "Trainer"
+        except: 
+            return False
 
 class AthleteWithTrainer(BasePermission):
     """

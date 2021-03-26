@@ -72,7 +72,7 @@ class CustomUser(AbstractUser, BaseModel):
     REQUIRED_FIELDS = []
 
     def compress(self, image):
-        im = Image.open(image)
+        im = Image.open(image).convert('RGB')
         # create a BytesIO object
         im_io = BytesIO() 
         im = im.crop_to_aspect(300, 300)

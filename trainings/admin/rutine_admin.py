@@ -24,9 +24,10 @@ class RutineAdmin(nested_admin.NestedModelAdmin):
 
 class ExcersiseAdmin(admin.ModelAdmin):
     model = Excersise
-    list_filter = ('muscles',)
+    list_filter = ('muscles', 'tags')
     search_fields = ('name', 'muscles')
     list_display = ('name', 'muscles')
 
+admin.site.register(ExcersiseTag)
 admin.site.register(Rutine, RutineAdmin)
 admin.site.register(Excersise, ExcersiseAdmin)

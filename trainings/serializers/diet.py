@@ -1,12 +1,22 @@
 from rest_framework import serializers
 from ..models.diet import Diet, DietDay, DietFood, DietRecipe, DietRecipeFood, DietGroup, Food
 from utils.serializers import OrderedSerializer
+from users.models import TrainerUser
 
 
 class FoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Food
-        fields = ('id', 'name', 'protein', 'carbohydrates', 'fat', 'kcalories', 'portion_weight')
+        fields = ('id', 'name', 'protein', 'carbohydrates', 'fat', 'kcalories', 'portion_weight', 'tags', 'public')
+
+    def create(self, validated_data):
+        user = TrainerUser.objects.get(user = self.context['request'].user)
+        instance = super().create(validated_data)
+        instance.public = False
+        instance.owner = user
+        instance.save()
+        return instance
+
 
 class DietRecipeFoodSerializer(serializers.ModelSerializer):
     food = FoodSerializer()

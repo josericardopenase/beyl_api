@@ -2,6 +2,7 @@ from rest_framework import serializers
 from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise
 from utils.serializers import OrderedSerializer, Base64ImageField, Base64VideoField
 
+from users.models import TrainerUser
 
 class ExcersiseSerializer(serializers.ModelSerializer):
 
@@ -9,8 +10,34 @@ class ExcersiseSerializer(serializers.ModelSerializer):
     video = Base64VideoField(max_length= 10000000, use_url = True)
     class Meta:
         model = Excersise
-        fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video', 'public')
+        fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video', 'tags', 'public')
 
+    def validate_image(self, image):
+
+        KB =  1000538
+
+        if(image.size > KB):
+            raise serializers.ValidationError("La imagen debe ser menor de 1 MB")
+
+        return image
+
+    def validate_video(self, image):
+
+        KB =  3000538
+
+        if(image.size > KB):
+            raise serializers.ValidationError("La imagen debe ser menor de 3 MB")
+
+        return image
+    def create(self, validated_data):
+        user = TrainerUser.objects.get(user = self.context['request'].user)
+        print(user)
+        validated_data['public'] = False
+        instance = super().create(validated_data)
+        instance.public = False
+        instance.owner = user
+        instance.save()
+        return instance
 class RutineExcersiseSerializer(OrderedSerializer):
     excersise = ExcersiseSerializer(many=True)
 
