@@ -16,7 +16,7 @@ class FoodTag(BaseModel):
 
 class Food(BaseModel):
     name = models.CharField(max_length=255)
-    public = models.BooleanField(default=False, db_column='is_public', blank=True)
+    public = models.BooleanField(default=False, db_column='public', blank=True)
     owner = models.ForeignKey(trainer_model, null=True, blank=True, db_column='trainer_owner', on_delete=models.CASCADE)
     tags = models.ManyToManyField(FoodTag, db_table='trainings_food_tags', blank=True)
     favourites = models.ManyToManyField(trainer_model, related_name='diet_favourites')
