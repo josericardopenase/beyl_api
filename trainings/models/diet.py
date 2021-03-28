@@ -3,13 +3,13 @@ from ..settings import athlete_model, trainer_model
 from utils.models import BaseModel, OrderedModel
 from model_clone import mixins
 
-athlete_model = athlete_model
-trainer_model = trainer_model
 
 # Create your models here.
 
 class FoodTag(BaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=False, null=False)
+    color_primary = models.CharField(max_length=244)
+    color_secondary = models.CharField(max_length=244)
 
     def __str__(self):
         return self.name
@@ -19,6 +19,7 @@ class Food(BaseModel):
     public = models.BooleanField(default=False, db_column='is_public', blank=True)
     owner = models.ForeignKey(trainer_model, null=True, blank=True, db_column='trainer_owner', on_delete=models.CASCADE)
     tags = models.ManyToManyField(FoodTag, db_table='trainings_food_tags', blank=True)
+    favourites = models.ManyToManyField(trainer_model, related_name='diet_favourites')
     protein = models.FloatField() 
     carbohydrates = models.FloatField()
     fat = models.FloatField()

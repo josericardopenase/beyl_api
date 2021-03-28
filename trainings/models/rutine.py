@@ -8,7 +8,9 @@ trainer_model = trainer_model
 
 
 class ExcersiseTag(BaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=False, null=False)
+    color_primary = models.CharField(max_length=244)
+    color_secondary = models.CharField(max_length=244)
 
     def __str__(self):
         return self.name
@@ -39,6 +41,7 @@ class Excersise(BaseModel):
     muscles = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     video = models.FileField(null = True, blank=True)
+    favourites = models.ManyToManyField(trainer_model, related_name='excersise_favourites')
 
     def __str__(self):
         return self.name

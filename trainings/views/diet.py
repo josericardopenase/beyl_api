@@ -1,9 +1,10 @@
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet, ReadOnlyModelViewSet, ModelViewSet, GenericViewSet
 from rest_framework import status 
-from ..serializers.diet import DietSerializer, DietDaySerializer, DietGroupSerializer, DietFoodSerializer, DietDayDetailSerializer, FoodSerializer, DietRecipesSerializer
+from ..serializers.diet import DietSerializer, DietDaySerializer, DietGroupSerializer, DietFoodSerializer, DietDayDetailSerializer, FoodSerializer, DietRecipesSerializer, FoodTagSerializer
 from ..serializers import diet
-from ..models.diet import Diet, DietDay, DietFood, DietGroup, Food, DietRecipe, DietRecipeFood, DietRecipe
+from ..models.diet import Diet, DietDay, DietFood, DietGroup, Food, DietRecipe, DietRecipeFood, DietRecipe, FoodTag
 from rest_framework import permissions
 from utils.permissions import AthleteWithTrainer, TrainersOnly
 from users.models import AthleteUser, TrainerUser
@@ -19,6 +20,11 @@ from django.db.models import Q
 #Django filters
 import django_filters.rest_framework
 from django_filters.rest_framework import DjangoFilterBackend
+
+class FoodTagViewset(ModelViewSet):
+    serializer_class =  FoodTagSerializer
+    queryset = FoodTag.objects.all()
+
 class DietClientView(ViewSet):
     """
 
@@ -85,7 +91,7 @@ class RecipeView(ViewSet):
 
 
 class pagination(PageNumberPagination):
-    page_size = 12
+    page_size = 8
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -101,11 +107,11 @@ class FoodView(ModelViewSet):
 
     pagination_class = pagination
     serializer_class = diet.FoodSerializer
-    queryset = Food.objects.all().order_by(Length('name'), 'id')
+    queryset = Food.objects.all().order_by('public' ,Length('name'), 'id')
     filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ('name', )
-    filterset_fields = ('public', 'owner')
+    filterset_fields = ('public', 'owner', 'tags')
 
     def get_queryset(self):
         try:
@@ -127,6 +133,23 @@ class FoodView(ModelViewSet):
         
         return super(FoodView, self).get_permissions()
 
+    @action(detail=True, methods=['post',])
+    def like(self, request, pk=None):
+        try:
+            trainer = TrainerUser.objects.get(user =  request.user)
+            excersise = Food.objects.get(pk = pk)
+
+            if(excersise.favourites.filter(pk = trainer.pk)):
+                excersise.favourites.remove(trainer)
+                excersise.save()
+                return Response({"id": pk,"info" : "se ha eliminado a favoritos correctamente"})
+            else:
+                excersise.favourites.add(trainer)
+                excersise.save()
+                return Response({"id": pk,"info" : "se ha agregado a favoritos correctamente"})
+
+        except:
+            return Response({"error" : "no se ha podido agregar a favoritos"})
 class DietView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = Diet.objects.all()
