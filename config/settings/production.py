@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = config('DEBUG', False)
 
 
 REST_FRAMEWORK = {

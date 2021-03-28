@@ -24,9 +24,12 @@ class ExcersiseSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video', 'tags', 'public', 'tags_read', 'is_favourite')
 
     def get_is_favourite(self, obj):
-        user = self.context['request'].user
-        trainer = TrainerUser.objects.get(user = user)
-        return obj.favourites.filter(pk = trainer.pk).exists()
+        try:
+            user = self.context['request'].user
+            trainer = TrainerUser.objects.get(user = user)
+            return obj.favourites.filter(pk = trainer.pk).exists()
+        except: 
+            return False
     def create(self, validated_data):
         #clean the validated_data
         owner = TrainerUser.objects.get(user = self.context['request'].user)

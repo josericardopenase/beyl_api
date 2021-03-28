@@ -21,9 +21,12 @@ class FoodSerializer(serializers.ModelSerializer):
         read_only_fields = ('public', 'id')
     
     def get_is_favourite(self, obj):
-        user = self.context['request'].user
-        trainer = TrainerUser.objects.get(user = user)
-        return obj.favourites.filter(pk = trainer.pk).exists()
+        try:
+            user = self.context['request'].user
+            trainer = TrainerUser.objects.get(user = user)
+            return obj.favourites.filter(pk = trainer.pk).exists()
+        except:
+            return False
 
 
     def create(self, validated_data):
