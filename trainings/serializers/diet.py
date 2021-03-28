@@ -12,13 +12,12 @@ class FoodTagSerializer(serializers.ModelSerializer):
 
 class FoodSerializer(serializers.ModelSerializer):
     tags_read = FoodTagSerializer(source='tags', many=True, read_only=True)
-    public = serializers.BooleanField(read_only=True)
+    public = serializers.BooleanField(read_only=True, required=False)
     is_favourite = serializers.SerializerMethodField()
 
     class Meta:
         model = Food
         fields = ('id', 'name', 'protein', 'carbohydrates', 'fat', 'kcalories', 'portion_weight', 'tags', 'public', 'tags_read', 'is_favourite')
-        read_only_fields = ('public', 'id')
     
     def get_is_favourite(self, obj):
         try:
@@ -27,7 +26,6 @@ class FoodSerializer(serializers.ModelSerializer):
             return obj.favourites.filter(pk = trainer.pk).exists()
         except:
             return False
-
 
     def create(self, validated_data):
         #clean the validated_data
@@ -40,6 +38,7 @@ class FoodSerializer(serializers.ModelSerializer):
         if(instance.public == True):
             raise serializers.ValidationError("No puedes modificar un ejericio publico")
         return super().update(instance, validated_data)
+
 class DietRecipeFoodSerializer(serializers.ModelSerializer):
     food = FoodSerializer()
     class Meta:

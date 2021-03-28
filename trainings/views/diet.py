@@ -9,7 +9,7 @@ from rest_framework import permissions
 from utils.permissions import AthleteWithTrainer, TrainersOnly
 from users.models import AthleteUser, TrainerUser
 from rest_framework import exceptions
-from utils.exceptions import NoRutine, NoTrainer
+from utils.exceptions import NoDiet, NoRutine, NoTrainer
 from rest_framework.pagination import PageNumberPagination
 import django_filters.rest_framework
 from rest_framework import filters
