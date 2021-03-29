@@ -19,7 +19,7 @@ class Food(BaseModel):
     public = models.BooleanField(default=False, db_column='public', blank=True)
     owner = models.ForeignKey(trainer_model, null=True, blank=True, db_column='trainer_owner', on_delete=models.CASCADE)
     tags = models.ManyToManyField(FoodTag, db_table='trainings_food_tags', blank=True)
-    favourites = models.ManyToManyField(trainer_model, related_name='diet_favourites')
+    favourites = models.ManyToManyField(trainer_model, related_name='diet_favourites', blank = True)
     protein = models.FloatField() 
     carbohydrates = models.FloatField()
     fat = models.FloatField()
