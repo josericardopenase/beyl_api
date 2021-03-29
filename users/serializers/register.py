@@ -5,6 +5,8 @@ from rest_framework.validators import UniqueValidator
 from users.submodels.relationship import InvitationCode
 from trainings.models import *
 from rest_framework.authtoken.models import Token
+from utils.emails.UserEmails import SendAccountVerificationEmail
+import secrets
 
 """
     FIXME: 
@@ -74,6 +76,8 @@ class AthleteRegisterSerializer(serializers.Serializer):
     sex = serializers.CharField()
     key = serializers.CharField()
     born_date = serializers.DateField()
+    amount_excersise = serializers.CharField()
+    alergias = serializers.CharField(allow_blank=True, allow_null=True)
 
     def validate(self, data):
 
@@ -115,6 +119,8 @@ class AthleteRegisterSerializer(serializers.Serializer):
             trainer_rutine = Rutine.objects.create(name="Rutina 1", owner=self.context['inv'].trainer),
             diet= Diet.objects.create(name="Dieta 1", owner=self.context['inv'].trainer),
             rutine = Rutine.objects.create(name="Rutina 1", owner=self.context['inv'].trainer),
+            amount_excersise=self.validated_data['amount_excersise'],
+            alergias = self.validated_data['alergias']
         ).save()
 
         self.context['inv'].delete()
@@ -130,6 +136,41 @@ class TrainerRegisterSerializer(serializers.Serializer):
     def validate(self, data):
         return data
 
+    def createTestAthlete(self, trainer, name, surname, weight, height, sex, sport):
+
+
+        num = secrets.token_hex(7)
+
+        while(len(CustomUser.objects.filter(email = "email_de_ejemplo" + num + "@beylapp.com")) != 0):
+            num = secrets.token_hex(7)
+
+        user = CustomUser(
+            email = "email_de_ejemplo" + num + "@beylapp.com",
+            user_type = "Athlete",
+            first_name = name,
+            last_name = surname,
+            is_active = False,
+            is_verified = False
+        )
+
+        user.save()
+
+        profile = AthleteUser(
+            trainer = trainer,
+            user = user,
+            weight = weight,
+            height = height,
+            fat = 40,
+            born_date = "1995-12-04",
+            sexo =  sex,
+            trainer_diet= Diet.objects.create(name="Dieta 1", owner=trainer),
+            trainer_rutine = Rutine.objects.create(name="Rutina 1", owner=trainer),
+            diet= Diet.objects.create(name="Dieta 1", owner=trainer),
+            rutine = Rutine.objects.create(name="Rutina 1", owner=trainer),
+            amount_excersise= sport,
+            alergias = "Ninguna"
+        ).save()
+
     def save(self):
 
         curruser = CustomUser(
@@ -138,7 +179,7 @@ class TrainerRegisterSerializer(serializers.Serializer):
             first_name = self.validated_data['name'],
             last_name = self.validated_data['surname'],
             is_active = True,
-            is_verified=True
+            is_verified=False
         )
 
         curruser.set_password(self.validated_data['password'])
@@ -149,9 +190,15 @@ class TrainerRegisterSerializer(serializers.Serializer):
             plan = TrainerPlan.objects.first()
         )
 
+
+
         profile.save()
 
+        self.createTestAthlete(profile, "Jose", "Francisco Pérez", 180, 70, "hombre", "EF")
+        self.createTestAthlete(profile, "Paula", "García Hume", 65, 170, "mujer", "EL")
         token = Token.objects.create(user=curruser) 
+
+        SendAccountVerificationEmail(self.validated_data['email'], self.validated_data['name'])
 
         return token, curruser
 

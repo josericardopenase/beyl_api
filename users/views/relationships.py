@@ -5,12 +5,14 @@ from rest_framework import status
 from rest_framework import permissions
 from utils.permissions import AthletesOnly, TrainersOnly
 from utils.exceptions import InvalidCode
-from ..serializers.relationship import InvitationCodeSerializer, InvitationCodeViewSerializer
+from ..serializers.relationship import InvitationCodeSerializer, InvitationCodeViewSerializer, AccountVerificationSerializer
 from ..submodels.relationship import InvitationCode
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin 
-
+from trainings.models.diet import Diet
+from trainings.models.rutine import Rutine
+from rest_framework.views import APIView
 
 
 
@@ -62,3 +64,33 @@ class InvitationCodeView(ModelViewSet, RetrieveModelMixin, DestroyModelMixin):
             return Response(serializer.data, status.HTTP_202_ACCEPTED)
         except:
             raise InvalidCode
+
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny,AthletesOnly])
+    def join_trainer(self, request):
+        try:
+            code = request.data['key']
+            code = InvitationCode.objects.get(key = code)
+
+            user = AthleteUser.objects.get(user = request.user)
+
+            user.trainer = code.trainer
+            user.trainer_diet = Diet.objects.create(name="Dieta 1", owner=code.trainer)
+            user.trainer_rutine =Rutine.objects.create(name="Rutina 1", owner=code.trainer)
+            user.rutine =Rutine.objects.create(name="Dieta entrenador 1", owner=code.trainer)
+            user.diet = Diet.objects.create(name="Rutina entrenador 1", owner=code.trainer)
+            user.save()
+
+            code.delete()
+
+            return Response({"Exito" : "Te has unido a tu entrenador"}, status.HTTP_202_ACCEPTED)
+        except:
+            raise InvalidCode
+
+
+class AccountVerificationAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AccountVerificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = {'message': 'Email verificado con éxito!'}
+        return Response(data, status.HTTP_200_OK)

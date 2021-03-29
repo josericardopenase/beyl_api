@@ -22,5 +22,12 @@ class RutineDayAdmin(nested_admin.NestedStackedInline):
 class RutineAdmin(nested_admin.NestedModelAdmin):
     inlines = [RutineDayAdmin, ]
 
+class ExcersiseAdmin(admin.ModelAdmin):
+    model = Excersise
+    list_filter = ('muscles', 'tags')
+    search_fields = ('name', 'muscles')
+    list_display = ('name', 'muscles')
+
+admin.site.register(ExcersiseTag)
 admin.site.register(Rutine, RutineAdmin)
-admin.site.register(Excersise)
+admin.site.register(Excersise, ExcersiseAdmin)

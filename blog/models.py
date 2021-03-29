@@ -6,7 +6,7 @@ from ckeditor.fields import RichTextField
 # Create your models here.
 class Article(BaseModel):
     title = models.CharField(max_length=400)
-    texto = RichTextField()
+    texto = models.TextField()
     image = models.ImageField()
     author = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, null=True, blank=True)
 

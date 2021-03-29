@@ -26,7 +26,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def fetch_messages(self, data):
-        print("hello world")
         messages = Message.last_30_messages()
         content = {
             'messages' : self.messages_to_json(messages)

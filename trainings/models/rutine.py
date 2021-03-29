@@ -7,6 +7,14 @@ athlete_model = athlete_model
 trainer_model = trainer_model
 
 
+class ExcersiseTag(BaseModel):
+    name = models.CharField(max_length=255, blank=False, null=False)
+    color_primary = models.CharField(max_length=244)
+    color_secondary = models.CharField(max_length=244)
+
+    def __str__(self):
+        return self.name
+
 # Create your models here.
 class Excersise(BaseModel):
     """
@@ -24,14 +32,16 @@ class Excersise(BaseModel):
         (5, "Hardcore")
     )
 
-    public = models.BooleanField()
+    public = models.BooleanField(blank=True)
     owner = models.ForeignKey('users.TrainerUser', on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=255)
+    tags = models.ManyToManyField(ExcersiseTag, db_table='trainings_excersise_tags', blank=True)
     difficult = models.IntegerField(choices=CHOICES) 
     image = models.ImageField()
     muscles = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     video = models.FileField(null = True, blank=True)
+    favourites = models.ManyToManyField(trainer_model, related_name='excersise_favourites')
 
     def __str__(self):
         return self.name

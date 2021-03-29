@@ -39,19 +39,19 @@ def SaveDietView(request, pk):
 
         #==================================
 
-        print(ath.rutine)
+
         ath_user = ath.user
 
-        print(ath.rutine.pk)
+
 
         pk = ath.diet.pk
 
-        print(pk)
+
 
         ath.diet = None
         ath.save()
 
-        print(ath)
+
 
         diet.Diet.objects.get(id = pk).delete()
 
@@ -103,22 +103,21 @@ def SaveRutineView(request, pk):
 
     try:
 
-        print("hello world")
+
 
         trainer=models.TrainerUser.objects.get(user = request.user)
-        print(trainer)
+
         ath = models.AthleteUser.objects.filter(id = pk).first()
 
         if(ath.trainer != trainer):
             return Response({"detail" : "This athlete is not yours"}, status = st.HTTP_400_BAD_REQUEST)
 
 
-        print(ath)
-        print("hello world")
+
+
         ath_user = ath.user
 
-        print(ath)
-        print(ath_user)
+
 
 
         #Implement clone behaviour
@@ -131,19 +130,19 @@ def SaveRutineView(request, pk):
 
         #==================================
 
-        print(ath.rutine)
+
         ath_user = ath.user
 
-        print(ath.rutine.pk)
+
 
         rutine_pk = ath.rutine.pk
 
-        print(pk)
+
 
         ath.rutine = None
         ath.save()
 
-        print(ath)
+
 
         rutine.Rutine.objects.get(id = rutine_pk).delete()
 

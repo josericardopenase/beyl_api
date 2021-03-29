@@ -11,18 +11,14 @@ import os
 
 from django.core.asgi import get_asgi_application
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
+django_asgi_app = get_asgi_application()
+
 #DJANGO CHANNELS CONFIGURATION
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels import auth
-import chat.routing
-
 from channels.auth import AuthMiddlewareStack
-from django.contrib.auth.models import AnonymousUser
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-
 
 application  = ProtocolTypeRouter({
-    'http' : get_asgi_application(),
+    'http' : django_asgi_app,
 })
 

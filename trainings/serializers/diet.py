@@ -1,12 +1,43 @@
 from rest_framework import serializers
-from ..models.diet import Diet, DietDay, DietFood, DietRecipe, DietRecipeFood, DietGroup, Food
+from ..models.diet import Diet, DietDay, DietFood, DietRecipe, DietRecipeFood, DietGroup, Food, FoodTag
 from utils.serializers import OrderedSerializer
+from users.models import TrainerUser
+from rest_framework.utils import model_meta
 
+
+class FoodTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodTag
+        fields = ('id','name', 'color_primary', 'color_secondary')
 
 class FoodSerializer(serializers.ModelSerializer):
+    tags_read = FoodTagSerializer(source='tags', many=True, read_only=True)
+    public = serializers.BooleanField(read_only=True, required=False)
+    is_favourite = serializers.SerializerMethodField()
+
     class Meta:
         model = Food
-        fields = ('id', 'name', 'protein', 'carbohydrates', 'fat', 'kcalories', 'portion_weight')
+        fields = ('id', 'name', 'protein', 'carbohydrates', 'fat', 'kcalories', 'portion_weight', 'tags', 'public', 'tags_read', 'is_favourite')
+    
+    def get_is_favourite(self, obj):
+        try:
+            user = self.context['request'].user
+            trainer = TrainerUser.objects.get(user = user)
+            return obj.favourites.filter(pk = trainer.pk).exists()
+        except:
+            return False
+
+    def create(self, validated_data):
+        #clean the validated_data
+        owner = TrainerUser.objects.get(user = self.context['request'].user)
+        validated_data['owner']  = TrainerUser.objects.get(user = self.context['request'].user)
+        validated_data['public'] = False
+        return  super().create(validated_data)
+
+    def update(self, instance,  validated_data):
+        if(instance.public == True):
+            raise serializers.ValidationError("No puedes modificar un ejericio publico")
+        return super().update(instance, validated_data)
 
 class DietRecipeFoodSerializer(serializers.ModelSerializer):
     food = FoodSerializer()
@@ -84,7 +115,7 @@ class DietDayNormalSerializer(OrderedSerializer):
 class DietNormalSerializer(OrderedSerializer):
     class Meta:
         model = Diet
-        fields = ('id', 'owner', 'name')
+        fields = ('id', 'owner', 'name', 'diet_days')
 
 class DietFoodPostSerializer(OrderedSerializer):
     class Meta:

@@ -1,11 +1,65 @@
 from rest_framework import serializers
-from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise
-from utils.serializers import OrderedSerializer
+from ..models.rutine import Rutine, RutineDay, RutineExcersise, RutineGroup, Excersise, ExcersiseTag
+from utils.serializers import OrderedSerializer, Base64ImageField, Base64VideoField
+from rest_framework.utils import model_meta
+
+from users.models import TrainerUser
+
+class ExcersiseTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =  ExcersiseTag
+        fields = ('id', 'name', 'color_primary', 'color_secondary')
 
 class ExcersiseSerializer(serializers.ModelSerializer):
+
+    tags_read = ExcersiseTagSerializer(source='tags', many=True, read_only = True)
+    
+    image = Base64ImageField(max_length= 10000000, use_url = True)
+    video = Base64VideoField(max_length= 10000000, use_url = True, required=False)
+    public = serializers.BooleanField(read_only=True)
+    is_favourite = serializers.SerializerMethodField()
+
     class Meta:
         model = Excersise
-        fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video')
+        fields = ('id', 'name', 'image', 'difficult', 'description', 'muscles', 'video', 'tags', 'public', 'tags_read', 'is_favourite')
+
+    def get_is_favourite(self, obj):
+        try:
+            user = self.context['request'].user
+            trainer = TrainerUser.objects.get(user = user)
+            return obj.favourites.filter(pk = trainer.pk).exists()
+        except: 
+            return False
+    def create(self, validated_data):
+        #clean the validated_data
+        owner = TrainerUser.objects.get(user = self.context['request'].user)
+        validated_data['owner']  = TrainerUser.objects.get(user = self.context['request'].user)
+        validated_data['public'] = False
+        return  super().create(validated_data)
+
+    def update(self, instance,  validated_data):
+        if(instance.public == True):
+            raise serializers.ValidationError("No puedes modificar un ejericio publico")
+        return super().update(instance, validated_data)
+
+    def validate_image(self, image):
+
+        KB =  1000538
+
+        if(image.size > KB):
+            raise serializers.ValidationError("La imagen debe ser menor de 1 MB")
+
+        return image
+
+    def validate_video(self, image):
+
+        KB =  3000538
+
+        if(image.size > KB):
+            raise serializers.ValidationError("La imagen debe ser menor de 3 MB")
+
+        return image
+
 
 class RutineExcersiseSerializer(OrderedSerializer):
     excersise = ExcersiseSerializer(many=True)

@@ -1,15 +1,34 @@
 from .base import *
 
+DEBUG = True
 
-STATIC_URL = '/static/'
+THIRD_PARTY_APPS += [
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+    'storages',
+    's3_folder_storage',
+    'anymail',
+    'ckeditor',
 
 ]
 
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "static_root")
 
+ALLOWED_HOSTS = ['*',]
+# Internationalization
+# https://docs.djangoproject.com/en/3.1/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+#STATIC AND MEDIA FILES
+
+
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media', 'media_root')

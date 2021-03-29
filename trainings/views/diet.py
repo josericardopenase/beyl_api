@@ -1,18 +1,29 @@
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet, ReadOnlyModelViewSet, ModelViewSet, GenericViewSet
 from rest_framework import status 
-from ..serializers.diet import DietSerializer, DietDaySerializer, DietGroupSerializer, DietFoodSerializer, DietDayDetailSerializer, FoodSerializer, DietRecipesSerializer
+from ..serializers.diet import DietSerializer, DietDaySerializer, DietGroupSerializer, DietFoodSerializer, DietDayDetailSerializer, FoodSerializer, DietRecipesSerializer, FoodTagSerializer
 from ..serializers import diet
-from ..models.diet import Diet, DietDay, DietFood, DietGroup, Food, DietRecipe, DietRecipeFood, DietRecipe
+from ..models.diet import Diet, DietDay, DietFood, DietGroup, Food, DietRecipe, DietRecipeFood, DietRecipe, FoodTag
 from rest_framework import permissions
-from utils.permissions import AthleteWithTrainer
+from utils.permissions import AthleteWithTrainer, TrainersOnly
 from users.models import AthleteUser, TrainerUser
 from rest_framework import exceptions
-from utils.exceptions import NoRutine, NoTrainer
+from utils.exceptions import NoDiet, NoRutine, NoTrainer
 from rest_framework.pagination import PageNumberPagination
 import django_filters.rest_framework
 from rest_framework import filters
 from rest_framework import mixins
+from django.db.models.functions import Length
+from django.db.models import Q
+
+#Django filters
+import django_filters.rest_framework
+from django_filters.rest_framework import DjangoFilterBackend
+
+class FoodTagViewset(ModelViewSet):
+    serializer_class =  FoodTagSerializer
+    queryset = FoodTag.objects.all()
 
 class DietClientView(ViewSet):
     """
@@ -80,11 +91,11 @@ class RecipeView(ViewSet):
 
 
 class pagination(PageNumberPagination):
-    page_size = 3
+    page_size = 8
     page_size_query_param = 'page_size'
-    max_page_size = 20
+    max_page_size = 100
 
-class FoodView(ReadOnlyModelViewSet):
+class FoodView(ModelViewSet):
     """
         ExcersiseView:
 
@@ -96,11 +107,49 @@ class FoodView(ReadOnlyModelViewSet):
 
     pagination_class = pagination
     serializer_class = diet.FoodSerializer
-    queryset = Food.objects.all()
-    filter_backends = (filters.SearchFilter, )
+    queryset = Food.objects.all().order_by('public' ,Length('name'), 'id')
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ('name', )
+    filterset_fields = ('public', 'owner', 'tags')
 
+    def get_queryset(self):
+        try:
+            user = self.request.user
+
+            trainer = None
+            if(user.user_type == "Trainer"):
+                trainer = TrainerUser.objects.get(user = user)
+            else:
+                trainer = AthleteUser.objects.get(user = user).trainer
+
+            return self.queryset.filter(Q(owner = trainer) | Q(public = True))
+        except: 
+            return super().get_queryset().filter(public = True)
+
+    def get_permissions(self):
+        if self.request.method == "POST" or self.request.method == "UPDATE" or self.request.method == "PATCH" or self.request.method == "PUT":
+            self.permission_classes = [TrainersOnly,]
+        
+        return super(FoodView, self).get_permissions()
+
+    @action(detail=True, methods=['post',])
+    def like(self, request, pk=None):
+        try:
+            trainer = TrainerUser.objects.get(user =  request.user)
+            excersise = Food.objects.get(pk = pk)
+
+            if(excersise.favourites.filter(pk = trainer.pk)):
+                excersise.favourites.remove(trainer)
+                excersise.save()
+                return Response({"id": pk,"info" : "se ha eliminado a favoritos correctamente"})
+            else:
+                excersise.favourites.add(trainer)
+                excersise.save()
+                return Response({"id": pk,"info" : "se ha agregado a favoritos correctamente"})
+
+        except:
+            return Response({"error" : "no se ha podido agregar a favoritos"})
 class DietView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated,]
     queryset = Diet.objects.all()
@@ -128,7 +177,6 @@ class DietFoodView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Update
     filterset_fields = ('group',)
 
     def get_serializer_class(self):
-        print(self.action)
 
         if self.action == 'update' or self.action == 'partial_update' or self.action == "create":
             return self.serializer_class
