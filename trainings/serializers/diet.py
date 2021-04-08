@@ -5,12 +5,24 @@ from users.models import TrainerUser
 from rest_framework.utils import model_meta
 
 
+#============================================
+# Serializers for the user.
+#============================================
+
 class FoodTagSerializer(serializers.ModelSerializer):
+    """
+        Serializer for the tags of 
+        the food.
+    """
     class Meta:
         model = FoodTag
         fields = ('id','name', 'color_primary', 'color_secondary')
 
 class FoodSerializer(serializers.ModelSerializer):
+    """
+        Serializer for the food.
+    """
+
     tags_read = FoodTagSerializer(source='tags', many=True, read_only=True)
     public = serializers.BooleanField(read_only=True, required=False)
     is_favourite = serializers.SerializerMethodField()
@@ -20,6 +32,11 @@ class FoodSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'protein', 'carbohydrates', 'fat', 'kcalories', 'portion_weight', 'tags', 'public', 'tags_read', 'is_favourite')
     
     def get_is_favourite(self, obj):
+        """
+            property that says if the user
+            that requested the food has this food 
+            in hes favourite list.
+        """
         try:
             user = self.context['request'].user
             trainer = TrainerUser.objects.get(user = user)
@@ -28,6 +45,11 @@ class FoodSerializer(serializers.ModelSerializer):
             return False
 
     def create(self, validated_data):
+        """
+        Modify create method to be sure that
+        the food that the user creates is in private.
+        """
+
         #clean the validated_data
         owner = TrainerUser.objects.get(user = self.context['request'].user)
         validated_data['owner']  = TrainerUser.objects.get(user = self.context['request'].user)
@@ -35,30 +57,39 @@ class FoodSerializer(serializers.ModelSerializer):
         return  super().create(validated_data)
 
     def update(self, instance,  validated_data):
+        """
+            Update method only if
+            the food is private.
+        """
+
         if(instance.public == True):
             raise serializers.ValidationError("No puedes modificar un ejericio publico")
         return super().update(instance, validated_data)
 
-class DietRecipeFoodSerializer(serializers.ModelSerializer):
-    food = FoodSerializer()
-    class Meta:
-        model = DietRecipeFood
-        fields = ('id', 'food', 'portion_cuantity','portion_unity') 
-
 class DietRecipesSerializer(serializers.ModelSerializer):
-    diet_recipe_food = DietRecipeFoodSerializer(many=True)
-
     class Meta:
         model = DietRecipe
         fields = ('id', 'group', 'name','preparation', 'image', 'diet_recipe_food') 
 
 class DietFoodSerializer(serializers.ModelSerializer):
+    """
+        Diet food is the food
+        that is attached to a concrete
+        diet.
+
+    """
     food = FoodSerializer()
     class Meta:
         model = DietFood
         fields = ('id', 'food', 'portion_cuantity','portion_unity', 'group', 'order') 
 
 class DietGroupSerializer(serializers.ModelSerializer):
+    """
+
+        Is the equivalent of breakfast, dinner etc...
+        it has some foods and recipes and also a anotation and a name.
+
+    """
     diet_food = DietFoodSerializer(many=True)
     diet_recipes = DietRecipesSerializer(many=True)
     class Meta:
@@ -66,6 +97,11 @@ class DietGroupSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'anotation', 'diet_food', 'diet_recipes') 
 
 class DietDayDetailSerializer(serializers.ModelSerializer):
+    """
+        A day of the week. It represents the foods that you
+        are going to eat in a concrete day. This is the detail one
+        who has also the diet groups.
+    """
     diet_groups = DietGroupSerializer(many=True)
 
     class Meta:
@@ -73,6 +109,11 @@ class DietDayDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'order','anotation', 'diet_groups') 
 
 class DietDaySerializer(serializers.ModelSerializer):
+    """
+
+        DietDay serializer that only has the base properties
+
+    """
     class Meta:
         model = DietDay
         fields = ('id', 'name', 'order','anotation') 

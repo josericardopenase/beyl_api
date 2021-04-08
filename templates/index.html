@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer type="module" src="index.js"></script>
+</head>
+<body>
+
+    <h1>Hello this is websocket example</h1>
+    <div id="App">
+        <input id="token" placeholder="token">
+        <button id="connect">enviar</button>
+        <br>
+        <br>
+        <br>
+        <input id="to" placeholder="con quien quieres hablar">
+        <br>
+        <input id="chat">
+        <button id="send">enviar</button>
+    </div>
+
+    <div id ="texto">
+
+    </div>
+
+    
+</body>
+
+
+<script>
+
+
+let socket = null;
+
+const to = document.querySelector("#to");
+const write = document.querySelector("#chat");
+const send =  document.querySelector("#send");
+const chat =  document.querySelector("#texto");
+
+console.log(write, send, chat)
+
+document.querySelector('#connect').addEventListener('click', () => {
+    console.log("hello")
+    socket = new WebSocket("ws://127.0.0.1:8000/ws/chat/?token=" + token.value)
+
+var user;
+
+socket.onmessage = event => {
+    const data = JSON.parse(event.data);
+    user = data.message
+    chat.innerHTML += `<div>${data.message}</div>`
+
+
+}
+
+send.addEventListener("click", () => {
+    console.log(write.value)
+    socket.send(JSON.stringify({
+        "content" : write.value,
+        "to" : to.value
+    }))
+})
+    }
+)
+
+/* socket.onopen = () => {
+    socket.send(JSON.stringify({
+        "Authentication" : "09eb218334d36ce6b256883dec10e1868f1b6b71"
+    }))
+} */
+
+
+
+</script>
+</html>
