@@ -17,7 +17,7 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 10
 # Create your views here.
-class WeightHistoryViewset(ViewSet):
+class WeightHistoryViewset(ReadOnlyModelViewSet):
     serializer_class = WeightHistorySerializer
     permission_classes = [IsAuthenticated, AthletesOnly]
 

@@ -10,7 +10,7 @@ from utils.serializers import Base64ImageField
 class ProfileSerializer(serializers.ModelSerializer):
     profile_pic = Base64ImageField(max_length= 10000000, use_url = True)
     class Meta():
-        fields = ['email', 'profile_pic', 'first_name', 'last_name']
+        fields = ['email', 'profile_pic', 'first_name', 'last_name', 'id']
         model  = CustomUser
 
     def validate_profile_pic(self, image):

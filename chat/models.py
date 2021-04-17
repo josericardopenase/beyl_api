@@ -26,7 +26,7 @@ class Message(BaseModel):
 
     """
 
-    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='chat')
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='chat', null = True, blank = True)
 
     author = models.ForeignKey(User, related_name="author_messages", on_delete=models.CASCADE, null = False, blank = False)
 
@@ -52,20 +52,6 @@ class Message(BaseModel):
         """
         pass 
 
-    def save(self, *args, **kwargs):
-        """
-        Trims white spaces, saves the message and notifies the recipient via WS
-        if the message is new.
-        """
-        new = self.pk
-        self.content = self.content.strip()  # Trimming whitespaces from the body
-        super(Message, self).save(*args, **kwargs)
-        if new is None:
-            self.notify_ws_clients()
 
-    # Meta
     class Meta:
-        app_label = 'core'
-        verbose_name = 'message'
-        verbose_name_plural = 'messages'
         ordering = ('-created',)

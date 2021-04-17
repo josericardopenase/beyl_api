@@ -29,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['*',]
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Application definition
 
@@ -240,12 +240,7 @@ CKEDITOR_CONFIGS = {
 #CHANNELS CONFIGURATION
 
 ASGI_APPLICATION = "config.asgi.application"
-""" 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-} """
+
 
 
 TEMPLATES = [

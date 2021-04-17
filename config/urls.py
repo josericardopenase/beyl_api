@@ -19,14 +19,8 @@ from django.conf.urls.static import static
 import django.views.defaults
 from django.conf import settings
 from django.shortcuts import render
-from chat.views import enviar_notificacion
-
-def current_datetime(request):
-    return render(request, 'index.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', current_datetime),
-    path('notification/', enviar_notificacion),
     path('v1/', include('api_v1.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

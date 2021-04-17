@@ -60,3 +60,13 @@ import dj_database_url
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 DATABASES['default']['CONN_MAX_AGE'] = 500
+
+CHANNEL_LAYERS ={
+    "default" : {
+        "BACKEND" : "channels.layers.InMemoryChannelLayer",
+        "CONFIG" : {
+            "hosts" :  [os.environ.get('REDIS_URL'), 'redis://localhost:6379']
+        }
+    },
+
+} 
