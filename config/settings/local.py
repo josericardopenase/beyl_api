@@ -1,6 +1,7 @@
 from .base import *
 
 DEBUG = True
+ASGI_APPLICATION = "config.asgi.application"
 
 THIRD_PARTY_APPS += [
 
