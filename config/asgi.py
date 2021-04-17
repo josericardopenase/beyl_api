@@ -21,9 +21,9 @@ from channels.auth import AuthMiddlewareStack
 from chat.routing import websocket_urlpatterns
 from utils.websockets.TokenAuthMiddleware import TokenAuthMiddleware
 
-
 application  = ProtocolTypeRouter({
     'http' : django_asgi_app,
     'websocket' : TokenAuthMiddleware(URLRouter(websocket_urlpatterns))
 })
+
 

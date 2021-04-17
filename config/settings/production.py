@@ -2,6 +2,8 @@ from .base import *
 
 DEBUG = config('DEBUG', False)
 
+ASGI_APPLICATION = "config.asgi.application"
+
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
