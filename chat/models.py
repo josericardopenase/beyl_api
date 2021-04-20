@@ -36,6 +36,16 @@ class Message(BaseModel):
 
     attached_file = models.FileField(null = True, blank = True)
 
+
+    def other(self, user):
+        if(type(user) is User):
+            if(self.to == user):
+                return self.author
+            return self.to
+
+        return None
+
+
     def __str__(self):
         return str(self.content)
 
