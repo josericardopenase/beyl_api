@@ -83,9 +83,15 @@ class OrderedSerializer(ModelSerializer):
         We define the order
         """
         try:
-           validated_data['order'] = self.get_queryset().last().order + 1 
+           if('order' in validated_data.keys()):
+                finalOrder = validated_data['order']
+                validated_data['order'] = self.get_queryset().last().order + 1 
+           else:
+                finalOrder = self.get_queryset().last().order + 1
+                validated_data['order'] = finalOrder
         except:
             validated_data['order'] = 1
+            finalOrder = 1
 
         ModelClass = self.Meta.model
 
@@ -103,7 +109,10 @@ class OrderedSerializer(ModelSerializer):
             for field_name, value in many_to_many.items():
                 field = getattr(instance, field_name)
                 field.set(value)
-            
+
+        instance.move_to(self.get_update_queryset(instance), finalOrder)
+
+        instance.save()
         return instance
         
 

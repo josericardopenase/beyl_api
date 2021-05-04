@@ -2,11 +2,17 @@ from django.db import models
 from ..settings import athlete_model, trainer_model
 from utils.models import BaseModel, OrderedModel
 from model_clone import mixins
-
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
 class FoodTag(BaseModel):
+
+    class FoodTagsCategories(models.TextChoices):
+        TIPO = 'TI', _('Tipo')
+        ALERGENOS = 'AL', _('Alérgenos')
+
+    category = models.CharField(max_length = 100, choices=FoodTagsCategories.choices, default = FoodTagsCategories.TIPO) 
     name = models.CharField(max_length=255, blank=False, null=False)
     color_primary = models.CharField(max_length=244)
     color_secondary = models.CharField(max_length=244)

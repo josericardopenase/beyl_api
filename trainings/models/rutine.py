@@ -2,12 +2,20 @@ from django.db import models
 from ..settings import athlete_model, trainer_model 
 from utils.models import BaseModel, OrderedModel
 from decimal import *
+from django.utils.translation import gettext_lazy as _
 
 athlete_model = athlete_model
 trainer_model = trainer_model
 
 
 class ExcersiseTag(BaseModel):
+
+    class ExcersiseTagsCategories(models.TextChoices):
+        TIPO = 'TI', _('Tipo')
+        MUSCULOS = 'MU', _('Músculos')
+        EQUIPAMIENTO = 'EQ', _('Equipamiento')
+
+    category = models.CharField(max_length = 100, choices=ExcersiseTagsCategories.choices, default = ExcersiseTagsCategories.TIPO) 
     name = models.CharField(max_length=255, blank=False, null=False)
     color_primary = models.CharField(max_length=244)
     color_secondary = models.CharField(max_length=244)
